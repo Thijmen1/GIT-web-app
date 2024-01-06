@@ -13,7 +13,7 @@ from plotly import graph_objs as go
 TODAY = date.today()
 
 # Set up Streamlit app title
-st.title('Prophet Forecast App')
+st.title('FB Prophet Forecasting')
 
 # List of popular stock tickers to choose from
 stocks = ('AAPL', 'AMZN', 'BABA', 'GOOGL', 'JNJ', 'JPM', 'META', 'MSFT', 'V')
