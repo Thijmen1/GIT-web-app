@@ -30,6 +30,9 @@ else:
 stock_info = yf.Ticker(selected_stock)
 company_name = stock_info.info['longName']
 
+# Show selected company name
+st.text(f'CSelected company: **{company_name}**')
+
 # Years for backtesting
 n_years_backtest = st.slider('Years for backtesting:', 1, 4)
 period_backtest = n_years_backtest * 365
@@ -51,7 +54,7 @@ default_start_year = max(TODAY.year - 5, first_year_with_data)
 
 # Start date selection
 start_year = st.slider('Select start year:', first_year_with_data, max_start_year, default_start_year)
-START = f"{start_year}-01-01"
+START = f'{start_year}-01-01'
 
 
 # Function to load historical stock data
