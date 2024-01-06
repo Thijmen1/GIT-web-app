@@ -92,7 +92,7 @@ def plot_sr_zones_with_signals(stock_data, num_clusters):
     ax2.set_ylabel('RSI')
     ax2.grid(False)
 
-    st.pyplot(fig)
+    plt.show()
 
 def main():
     st.title('SR Zones Analysis')
