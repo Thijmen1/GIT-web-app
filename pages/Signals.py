@@ -101,7 +101,7 @@ def plot_sr_zones_with_signals(stock_data, num_clusters):
 # Streamlit App
 st.title('Stock Analysis with SR Zones')
 ticker = st.text_input("Enter Ticker:", "TSLA")
-start_date = st.slider('Select start date:', '2021-01-01', '2024-01-01', '2021-01-01')
+start_date = st.slider('Select start date:', min_value='2021-01-01', max_value='2024-01-01', value='2021-01-01')
 
 # Fetch the stock data based on user input
 stock_data = yf.download(ticker, start=start_date, end='2024-01-01')
