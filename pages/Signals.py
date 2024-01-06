@@ -13,7 +13,7 @@ import matplotlib.dates as mdates
 
 
 def find_sr_zones(stock_data, num_clusters=5, Zonewidth=15):
-    closes = stock_data['Close'].values.reshape(-1, 1)
+    closes = np.array(stock_data['Close']).reshape(-1, 1)
 
     # Apply KMeans clustering
     kmeans = KMeans(n_clusters=num_clusters, random_state=42).fit(closes)
