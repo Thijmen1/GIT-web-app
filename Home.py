@@ -8,7 +8,7 @@ st.markdown(
     """
     # Stock Forecasting App
     
-    Welcome to the Stock Forecasting App! This app, developed by the Git Delta team, allows you to explore historical stock data, perform backtesting, and predict future stock prices using advanced forecasting tools.
+    Welcome to the Stock Forecasting App! This app, developed by the GIT Delta team, allows you to explore historical stock data, perform backtesting, and predict future stock prices using advanced forecasting tools.
     
     ## How to Use:
     1. Select a stock from the dropdown menu or enter a custom ticker.
