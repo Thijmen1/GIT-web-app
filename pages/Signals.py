@@ -118,7 +118,10 @@ else:
     selected_stock = custom_ticker.upper()
 
 # Slider for choosing the start date
-start_date = st.slider('Select start date:', min_value='2010-01-01', max_value='2024-01-01', value='2021-01-01')
+start_date = st.slider('Select start date:',
+                      min_value=pd.to_datetime('2010-01-01'),
+                      max_value=pd.to_datetime('2024-01-01'),
+                      value=pd.to_datetime('2021-01-01'))
 
 # Fetch historical data for the selected stock
 historical_data = yf.download(selected_stock, start_date, date.today())
