@@ -1,19 +1,16 @@
-# Standard Libraries
-from datetime import date
+# Streamlit App for Stock Analysis with Support and Resistance Zones
 
-# External Libraries
-import pandas as pd
 import yfinance as yf
-import streamlit as st
 import numpy as np
 from sklearn.cluster import KMeans
 import ta
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import streamlit as st
 
-
+# Function to find support and resistance zones
 def find_sr_zones(stock_data, num_clusters=5, Zonewidth=15):
-    closes = np.array(stock_data['Close']).reshape(-1, 1)
+    closes = stock_data['Close'].values.reshape(-1, 1)
 
     # Apply KMeans clustering
     kmeans = KMeans(n_clusters=num_clusters, random_state=42).fit(closes)
@@ -31,7 +28,7 @@ def find_sr_zones(stock_data, num_clusters=5, Zonewidth=15):
 
     return stock_data
 
-
+# Function to generate trading signals
 def generate_trading_signals(data, num_clusters):
     # Buy Signal conditions
     buy_conditions = (data['RSI'] < 30) & (data['Close'] < data['LowerBand'])
@@ -52,7 +49,7 @@ def generate_trading_signals(data, num_clusters):
 
     return data
 
-
+# Function to plot support and resistance zones with signals
 def plot_sr_zones_with_signals(stock_data, num_clusters):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), gridspec_kw={'height_ratios': [3, 1]})
 
@@ -99,48 +96,31 @@ def plot_sr_zones_with_signals(stock_data, num_clusters):
     ax2.set_ylabel('RSI')
     ax2.grid(False)
 
-    # Display the plot using Streamlit
     st.pyplot(fig)
 
+# Streamlit App
+st.title('Stock Analysis with SR Zones')
+ticker = st.text_input("Enter Ticker:", "TSLA")
+start_date = st.slider('Select start date:', '2021-01-01', '2024-01-01', '2021-01-01')
 
-# Streamlit UI
-st.title('Stock Analysis and Signals')
-
-# List of popular stock tickers to choose from
-stocks = ('AAPL', 'AMZN', 'BABA', 'GOOGL', 'JNJ', 'JPM', 'META', 'MSFT', 'V')
-
-# User input for selecting a stock either from the list or entering a custom ticker
-user_input = st.radio("Select data source:", ("Choose from list", "Enter ticker"))
-if user_input == "Choose from list":
-    selected_stock = st.selectbox('Select dataset for analysis', stocks)
-else:
-    custom_ticker = st.text_input("Enter ticker:")
-    selected_stock = custom_ticker.upper()
-
-# Slider for choosing the start date
-start_date = st.slider('Select start date:',
-                      min_value=pd.to_datetime('2010-01-01').timestamp(),
-                      max_value=pd.to_datetime('2024-01-01').timestamp(),
-                      value=pd.to_datetime('2021-01-01').timestamp(),
-                      format="DD-MM-YYYY")
-
-# Fetch historical data for the selected stock
-historical_data = yf.download(selected_stock, start_date, date.today())
+# Fetch the stock data based on user input
+stock_data = yf.download(ticker, start=start_date, end='2024-01-01')
 
 # Calculate RSI
-historical_data['RSI'] = ta.momentum.RSIIndicator(historical_data['Close'], window=14).rsi()
+stock_data['RSI'] = ta.momentum.RSIIndicator(stock_data['Close'], window=14).rsi()
 
 # Calculate Bollinger Bands
-historical_data['MA20'] = historical_data['Close'].rolling(window=20).mean()
-historical_data['UpperBand'] = historical_data['MA20'] + 2 * historical_data['Close'].rolling(window=20).std()
-historical_data['LowerBand'] = historical_data['MA20'] - 2 * historical_data['Close'].rolling(window=20).std()
+stock_data['MA20'] = stock_data['Close'].rolling(window=20).mean()
+stock_data['UpperBand'] = stock_data['MA20'] + 2 * stock_data['Close'].rolling(window=20).std()
+stock_data['LowerBand'] = stock_data['MA20'] - 2 * stock_data['Close'].rolling(window=20).std()
 
-# Find support and resistance zones and add them as columns
-num_clusters = 5  # Set the desired number of clusters (SR zones)
-historical_data = find_sr_zones(historical_data, num_clusters)
+# Find support and resistance zones
+num_clusters = 5
+Zonewidth = 15
+stock_data = find_sr_zones(stock_data, num_clusters)
 
 # Generate trading signals
-historical_data = generate_trading_signals(historical_data, num_clusters)
+stock_data = generate_trading_signals(stock_data, num_clusters)
 
 # Plot stock prices with SR zones, Bollinger Bands, and RSI
-plot_sr_zones_with_signals(historical_data, num_clusters)
+plot_sr_zones_with_signals(stock_data, num_clusters)
