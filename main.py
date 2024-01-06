@@ -31,8 +31,7 @@ stock_info = yf.Ticker(selected_stock)
 company_name = stock_info.info['longName']
 
 # Show selected company name
-st.text('Selected company:')
-st.header(f'{company_name}')
+st.subheader(f'{company_name}')
 
 # Years for backtesting
 n_years_backtest = st.slider('Years for backtesting:', 1, 4)
