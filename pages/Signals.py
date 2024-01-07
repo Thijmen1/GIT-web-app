@@ -96,7 +96,7 @@ def plot_sr_zones_with_signals(stock_data, num_clusters):
     # Highlight Buy signals
     fig1.add_trace(go.Scatter(x=stock_data[stock_data['Buy_Signal']].index,
                               y=stock_data['Close'][stock_data['Buy_Signal']],
-                              mode='markers', marker=dict(color='green', symbol='triangle-up', size=12),
+                              mode='markers', marker=dict(color='limegreen', symbol='triangle-up', size=12),
                               name='Buy Signal'))
 
     # Highlight Sell signals
