@@ -129,7 +129,7 @@ def plot_rsi_analysis(stock_data):
     fig2.add_trace(go.Scatter(x=stock_data.index, y=stock_data['RSI'], name='RSI'))
     fig2.add_trace(go.Scatter(x=stock_data[stock_data['Take_Action_Signal']].index,
                               y=stock_data['RSI'][stock_data['Take_Action_Signal']],
-                              mode='markers', marker=dict(size=4), name='Action Signal'))
+                              mode='markers', marker=dict(size=6, color='red'), name='Action Signal'))
 
     # Customize y-axis ticks
     fig2.update_yaxes(tickvals=[30, 50, 70], ticktext=['30', '50', '70'])
