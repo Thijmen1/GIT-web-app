@@ -26,5 +26,7 @@ st.markdown(
     
      #### Tip:
     - Enhance visibility with dark mode for better contrast. Easily customize the app theme by accessing 'Settings' from the top-right hamburger menu.
+
+    *Last updated on 7-9-2024*
     """
 )
