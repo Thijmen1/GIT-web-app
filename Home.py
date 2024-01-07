@@ -23,9 +23,6 @@ st.markdown(
     If you have any questions or feedback, feel free to reach out! Suggestions are always welcome!
 
     Enjoy exploring the world of stock forecasting!
-    
-    #### Tip:
-    - Enhance visibility with dark mode for better contrast. Easily customize the app theme by accessing 'Settings' from the top-right menu.
 
     *Last updated on 7-1-2024*
     """
