@@ -156,12 +156,12 @@ else:
     custom_ticker = st.text_input("Enter ticker:")
     selected_stock = custom_ticker.upper()
 
-# # Determine the full company name
-# stock_info = yf.Ticker(selected_stock)
-# company_name = stock_info.info['longName']
-#
-# # Show selected company name
-# st.subheader(f'{company_name}')
+# Determine the full company name
+stock_info = yf.Ticker(selected_stock)
+company_name = stock_info.info['longName']
+
+# Show selected company name
+st.subheader(f'{company_name}')
 
 # Fetch historical data for the selected stock
 historical_data = yf.download(selected_stock, TODAY - pd.DateOffset(years=20), TODAY)
