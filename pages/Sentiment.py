@@ -3,12 +3,10 @@ from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 import pandas as pd
 import plotly.express as px
-# Download VADER lexicon file
+import datetime
 import nltk
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
-import datetime
 
 
 # Function to get news from FinViz
