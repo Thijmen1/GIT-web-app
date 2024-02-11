@@ -174,7 +174,7 @@ else:
     ticker = st.text_input('Enter stock ticker', '').upper()
 
 # Determine the full company name
-stock_info = yf.Ticker(selected_stock)
+stock_info = yf.Ticker(ticker)
 company_name = stock_info.info['longName']
 
 # Show selected company name
