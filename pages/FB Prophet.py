@@ -11,7 +11,7 @@ from plotly import graph_objs as go
 
 
 # Function to load historical stock data
-@st.cache_resource
+@st.cache_data
 def load_data(ticker, start_date, end_date):
     data = yf.download(ticker, start_date, end_date)
     data.reset_index(inplace=True)
@@ -24,7 +24,7 @@ def plot_raw_data():
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Open'], name="Open"))
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Close'], name="Close"))
     fig.layout.update(
-        title_text=f'Stock Price since {START}',
+        title_text=f'{ticker} Stock Price',
         xaxis_title='Date',
         yaxis_title='Price (USD)',
         xaxis_rangeslider_visible=True,
@@ -37,7 +37,7 @@ def plot_raw_data():
 def plot_backtest():
     fig_backtest = plot_plotly(m_backtest, forecast_backtest)
     fig_backtest.layout.update(
-        title_text=f'Backtest Plot for {n_years_backtest} {"Year" if n_years_backtest == 1 else "Years"}',
+        title_text=f'{ticker} Backtest Forecast for {n_years_backtest} {"Year" if n_years_backtest == 1 else "Years"}',
         xaxis_title='Date',
         yaxis_title='Close Price (USD)',
         height=500
@@ -51,7 +51,7 @@ def plot_backtest_comparison():
     fig_compare.add_trace(go.Scatter(x=compare_df['Date'], y=compare_df['Close'], name='Actual'))
     fig_compare.add_trace(go.Scatter(x=compare_df['Date'], y=compare_df['yhat'], name='Predicted'))
     fig_compare.layout.update(
-        title_text='Backtest Comparison with Actual Values', xaxis_title='Date',
+        title_text=f'{ticker} Backtest Comparison with Actual Values', xaxis_title='Date',
         yaxis_title='Close Price (USD)',
         height=400
     )
@@ -62,7 +62,7 @@ def plot_backtest_comparison():
 def plot_future():
     fig_future = plot_plotly(m_future, forecast_future)
     fig_future.layout.update(
-        title_text=f'Future Plot for {n_years_future} {"Year" if n_years_future == 1 else "Years"}',
+        title_text=f'{ticker} Future Forecast for {n_years_future} {"Year" if n_years_future == 1 else "Years"}',
         xaxis_title='Date',
         yaxis_title='Close Price (USD)',
         height=500
@@ -91,17 +91,24 @@ if ticker_option == "Choose from list":
 else:
     ticker = st.text_input('Enter stock ticker', '').upper()
 
-# Years for backtesting
-n_years_backtest = st.slider('Years for backtesting:', 1, 4)
-period_backtest = n_years_backtest * 365
-
-# Years for future prediction
-n_years_future = st.slider('Years for future prediction:', 1, 4)
-period_future = n_years_future * 365
-
 # Check if ticker is provided
 if ticker:
     try:
+        # Determine the full company name
+        stock_info = yf.Ticker(ticker)
+        company_name = stock_info.info['longName']
+
+        # Show selected company name
+        st.subheader(f'{company_name}')
+
+        # Years for backtesting
+        n_years_backtest = st.slider('Years for backtesting:', 1, 4)
+        period_backtest = n_years_backtest * 365
+
+        # Years for future prediction
+        n_years_future = st.slider('Years for future prediction:', 1, 4)
+        period_future = n_years_future * 365
+
         # Fetch historical data for the selected stock
         historical_data = yf.download(ticker, TODAY - pd.DateOffset(years=11), TODAY)
         min_start_year = historical_data.index.min().year
