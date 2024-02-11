@@ -102,6 +102,13 @@ period_future = n_years_future * 365
 # Check if ticker is provided
 if ticker:
     try:
+        # Determine the full company name
+        stock_info = yf.Ticker(ticker)
+        company_name = stock_info.info['longName']
+
+        # Show selected company name
+        st.subheader(f'{company_name}')
+
         # Fetch historical data for the selected stock
         historical_data = yf.download(ticker, TODAY - pd.DateOffset(years=11), TODAY)
         min_start_year = historical_data.index.min().year
