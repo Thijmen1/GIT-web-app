@@ -91,14 +91,6 @@ if ticker_option == "Choose from list":
 else:
     ticker = st.text_input('Enter stock ticker', '').upper()
 
-# Years for backtesting
-n_years_backtest = st.slider('Years for backtesting:', 1, 4)
-period_backtest = n_years_backtest * 365
-
-# Years for future prediction
-n_years_future = st.slider('Years for future prediction:', 1, 4)
-period_future = n_years_future * 365
-
 # Check if ticker is provided
 if ticker:
     try:
@@ -108,6 +100,14 @@ if ticker:
 
         # Show selected company name
         st.subheader(f'{company_name}')
+
+        # Years for backtesting
+        n_years_backtest = st.slider('Years for backtesting:', 1, 4)
+        period_backtest = n_years_backtest * 365
+
+        # Years for future prediction
+        n_years_future = st.slider('Years for future prediction:', 1, 4)
+        period_future = n_years_future * 365
 
         # Fetch historical data for the selected stock
         historical_data = yf.download(ticker, TODAY - pd.DateOffset(years=11), TODAY)
