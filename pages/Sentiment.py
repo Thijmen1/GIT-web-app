@@ -1,13 +1,15 @@
+# Standard Libraries
+import datetime
+
+# External Libraries
+import pandas as pd
 import streamlit as st
+import plotly.graph_objects as go
+import nltk
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
-import pandas as pd
-import plotly.express as px
-import datetime
-import nltk
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-import matplotlib.dates as mdates
 
 
 # Function to get news from FinViz
@@ -24,7 +26,6 @@ def get_news(ticker):
 # Parse news into DataFrame
 def parse_news(news_table):
     parsed_news = []
-    today_string = datetime.datetime.today().strftime('%Y-%m-%d')
 
     for x in news_table.findAll('tr'):
         try:
@@ -57,53 +58,70 @@ def score_news(parsed_news_df):
 
     parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')
     parsed_and_scored_news = parsed_and_scored_news.set_index('Datetime')
-    
+
     # Check if 'Date' and 'Time' columns exist before dropping them
     if 'Date' in parsed_and_scored_news.columns and 'Time' in parsed_and_scored_news.columns:
         parsed_and_scored_news = parsed_and_scored_news.drop(['Date', 'Time'], axis=1)
-        
+
     parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "Sentiment Score"})
 
     return parsed_and_scored_news
 
 
-# Plot hourly sentiment
 def plot_hourly_sentiment(parsed_and_scored_news, ticker):
     # Select only numeric columns for resampling
     numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
-    
+
     # Calculate mean sentiment scores
     mean_scores = numeric_columns.resample('H').mean()
-    
-    fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Hourly Sentiment Scores')
-    fig.update_xaxes(title="Time")
-    fig.update_yaxes(title="Sentiment Score")
-    
+
+    # Define custom color scale for the bar chart
+    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
+                         marker=dict(color=mean_scores['Sentiment Score'],
+                                     coloraxis="coloraxis")),
+                  )
+
+    fig.update_layout(coloraxis=dict(colorscale=color_scale),
+                      title=ticker + ' Hourly Sentiment Scores',
+                      xaxis_title="Time",
+                      yaxis_title="Sentiment Score")
+
     # Set x-axis date format
-    fig.update_layout(xaxis=dict(tickmode='linear', 
-                                  tickformat='%Y-%m-%d',
-                                  tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
-    
+    fig.update_layout(xaxis=dict(tickmode='linear',
+                                 tickformat='%Y-%m-%d',
+                                 tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
+
     return fig
 
-
-# Plot daily sentiment
 def plot_daily_sentiment(parsed_and_scored_news, ticker):
     # Select only numeric columns for resampling
     numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
-    
+
     # Calculate mean sentiment scores
     mean_scores = numeric_columns.resample('D').mean()
-    
-    fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Daily Sentiment Scores')
-    fig.update_xaxes(title="Date")
-    fig.update_yaxes(title="Sentiment Score")
-    
+
+    # Define custom color scale for the bar chart
+    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
+                         marker=dict(color=mean_scores['Sentiment Score'],
+                                     coloraxis="coloraxis")),
+                  )
+
+    fig.update_layout(coloraxis=dict(colorscale=color_scale),
+                      title=ticker + ' Daily Sentiment Scores',
+                      xaxis_title="Date",
+                      yaxis_title="Sentiment Score")
+
     # Set x-axis date format
-    fig.update_layout(xaxis=dict(tickmode='linear', 
-                                  tickformat='%Y-%m-%d',
-                                  tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
-    
+    fig.update_layout(xaxis=dict(tickmode='linear',
+                                 tickformat='%Y-%m-%d',
+                                 tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
+
     return fig
 
 
