@@ -37,7 +37,7 @@ def plot_raw_data():
 def plot_backtest():
     fig_backtest = plot_plotly(m_backtest, forecast_backtest)
     fig_backtest.layout.update(
-        title_text=f'Backtest Plot for {n_years_backtest} {"Year" if n_years_backtest == 1 else "Years"}',
+        title_text=f'{ticker} Backtest Plot for {n_years_backtest} {"Year" if n_years_backtest == 1 else "Years"}',
         xaxis_title='Date',
         yaxis_title='Close Price (USD)',
         height=500
@@ -51,7 +51,7 @@ def plot_backtest_comparison():
     fig_compare.add_trace(go.Scatter(x=compare_df['Date'], y=compare_df['Close'], name='Actual'))
     fig_compare.add_trace(go.Scatter(x=compare_df['Date'], y=compare_df['yhat'], name='Predicted'))
     fig_compare.layout.update(
-        title_text='Backtest Comparison with Actual Values', xaxis_title='Date',
+        title_text=f'{ticker} Backtest Comparison with Actual Values', xaxis_title='Date',
         yaxis_title='Close Price (USD)',
         height=400
     )
