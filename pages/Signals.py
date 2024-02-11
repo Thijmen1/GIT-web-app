@@ -13,7 +13,7 @@ import ta
 
 
 # Function to load historical stock data
-@st.cache_resource
+@st.cache_data
 def load_data(ticker, start_date, end_date):
     data = yf.download(ticker, start_date, end_date)
     data.reset_index(inplace=True)
