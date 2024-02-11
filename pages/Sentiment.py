@@ -7,6 +7,7 @@ import datetime
 import nltk
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import matplotlib.dates as mdates
 
 
 # Function to get news from FinViz
@@ -77,6 +78,12 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
     fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Hourly Sentiment Scores')
     fig.update_xaxes(title="Time")
     fig.update_yaxes(title="Sentiment Score")
+    
+    # Set x-axis date format
+    fig.update_layout(xaxis=dict(tickmode='linear', 
+                                  tickformat='%Y-%m-%d',
+                                  tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
+    
     return fig
 
 
@@ -91,6 +98,12 @@ def plot_daily_sentiment(parsed_and_scored_news, ticker):
     fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Daily Sentiment Scores')
     fig.update_xaxes(title="Date")
     fig.update_yaxes(title="Sentiment Score")
+    
+    # Set x-axis date format
+    fig.update_layout(xaxis=dict(tickmode='linear', 
+                                  tickformat='%Y-%m-%d',
+                                  tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
+    
     return fig
 
 
