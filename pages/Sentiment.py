@@ -142,7 +142,7 @@ else:
 
 # Check if ticker is provided
 if ticker:
-     try:
+    try:
         news_table = get_news(ticker)
         if news_table:
             parsed_news_df = parse_news(news_table)
