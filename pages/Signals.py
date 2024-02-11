@@ -12,11 +12,11 @@ from sklearn.cluster import KMeans
 import ta
 
 
+# Function to load historical stock data
 @st.cache_resource
 def load_data(ticker, start_date, end_date):
     data = yf.download(ticker, start_date, end_date)
     data.reset_index(inplace=True)
-    st.write(data.head())  # Add this line for debugging
     return data.set_index('Date')
 
 
