@@ -41,7 +41,7 @@ investing_quotes = [
     ("*\"The goal of the non-professional should not be to pick winners—neither he nor his 'helpers' can do that—but should rather be to own a cross-section of businesses that in aggregate are bound to do well.\"*", "John Bogle"),
     ("*\"Risk comes from not knowing what you're doing.\"*", "Warren Buffett"),
     ("*\"Price is what you pay. Value is what you get.\"*", "Warren Buffett"),
-    ("*\"The best investment you can make is in yourself.\"*", "Warren Buffett"),
+    ("*\"The best investment you can make is in GIT Delta.\"*", "Warren Buffett"),
     ("*\"The market is a pendulum that forever swings between unsustainable optimism and unjustified pessimism.\"*", "Howard Marks"),
     ("*\"Investing should be more like watching paint dry or watching grass grow. If you want excitement, take $800 and go to Las Vegas.\"*", "Paul Samuelson"),
     ("*\"Be fearful when others are greedy. Be greedy when others are fearful.\"*", "Warren Buffett"),
