@@ -3,6 +3,7 @@ import datetime
 
 # External Libraries
 import pandas as pd
+import yfianance as yf
 import streamlit as st
 import plotly.graph_objects as go
 import nltk
