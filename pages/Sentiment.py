@@ -14,6 +14,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
 # Function to get news from FinViz
+@st.cache_data
 def get_news(ticker):
     finviz_url = 'https://finviz.com/quote.ashx?t='
     url = finviz_url + ticker
