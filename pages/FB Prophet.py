@@ -37,7 +37,7 @@ def plot_raw_data():
 def plot_backtest():
     fig_backtest = plot_plotly(m_backtest, forecast_backtest)
     fig_backtest.layout.update(
-        title_text=f'{ticker} Backtest Plot for {n_years_backtest} {"Year" if n_years_backtest == 1 else "Years"}',
+        title_text=f'{ticker} Backtest Forecast for {n_years_backtest} {"Year" if n_years_backtest == 1 else "Years"}',
         xaxis_title='Date',
         yaxis_title='Close Price (USD)',
         height=500
@@ -62,7 +62,7 @@ def plot_backtest_comparison():
 def plot_future():
     fig_future = plot_plotly(m_future, forecast_future)
     fig_future.layout.update(
-        title_text=f'Future Plot for {n_years_future} {"Year" if n_years_future == 1 else "Years"}',
+        title_text=f'{ticker} Future Forecast for {n_years_future} {"Year" if n_years_future == 1 else "Years"}',
         xaxis_title='Date',
         yaxis_title='Close Price (USD)',
         height=500
