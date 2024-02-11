@@ -91,13 +91,6 @@ if ticker_option == "Choose from list":
 else:
     ticker = st.text_input('Enter stock ticker', '').upper()
 
-# Determine the full company name
-stock_info = yf.Ticker(ticker)
-company_name = stock_info.info['longName']
-
-# Show selected company name
-st.subheader(f'{company_name}')
-
 # Years for backtesting
 n_years_backtest = st.slider('Years for backtesting:', 1, 4)
 period_backtest = n_years_backtest * 365
