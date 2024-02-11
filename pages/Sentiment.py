@@ -98,7 +98,6 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
                       yaxis_title="Sentiment Score",
                       width=None,
                       height=None,
-                      margin=dict(l=0, r=0, t=0, b=0),
                       )
     return fig
 
@@ -132,7 +131,6 @@ def plot_daily_sentiment(parsed_and_scored_news, ticker):
                       yaxis_title="Sentiment Score",
                       width=None,
                       height=None,
-                      margin=dict(l=0, r=0, t=0, b=0),
                       )
     return fig
 
