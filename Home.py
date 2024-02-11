@@ -1,10 +1,13 @@
+# Standard Libraries
+import datetime
+
+# External Libraries
+import pandas as pd
 import streamlit as st
+import plotly.graph_objects as go
+import nltk
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
-import pandas as pd
-import plotly.express as px
-import datetime
-import nltk
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
@@ -65,7 +68,6 @@ def score_news(parsed_news_df):
     return parsed_and_scored_news
 
 
-# Plot hourly sentiment
 def plot_hourly_sentiment(parsed_and_scored_news, ticker):
     # Select only numeric columns for resampling
     numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
@@ -73,9 +75,19 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
     # Calculate mean sentiment scores
     mean_scores = numeric_columns.resample('H').mean()
 
-    fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Hourly Sentiment Scores')
-    fig.update_xaxes(title="Time")
-    fig.update_yaxes(title="Sentiment Score")
+    # Define custom color scale for the bar chart
+    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
+                         marker=dict(color=mean_scores['Sentiment Score'],
+                                     coloraxis="coloraxis")),
+                  )
+
+    fig.update_layout(coloraxis=dict(colorscale=color_scale),
+                      title=ticker + ' Hourly Sentiment Scores',
+                      xaxis_title="Time",
+                      yaxis_title="Sentiment Score")
 
     # Set x-axis date format
     fig.update_layout(xaxis=dict(tickmode='linear',
@@ -84,8 +96,6 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
 
     return fig
 
-
-# Plot daily sentiment
 def plot_daily_sentiment(parsed_and_scored_news, ticker):
     # Select only numeric columns for resampling
     numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
@@ -93,9 +103,19 @@ def plot_daily_sentiment(parsed_and_scored_news, ticker):
     # Calculate mean sentiment scores
     mean_scores = numeric_columns.resample('D').mean()
 
-    fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Daily Sentiment Scores')
-    fig.update_xaxes(title="Date")
-    fig.update_yaxes(title="Sentiment Score")
+    # Define custom color scale for the bar chart
+    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
+                         marker=dict(color=mean_scores['Sentiment Score'],
+                                     coloraxis="coloraxis")),
+                  )
+
+    fig.update_layout(coloraxis=dict(colorscale=color_scale),
+                      title=ticker + ' Daily Sentiment Scores',
+                      xaxis_title="Date",
+                      yaxis_title="Sentiment Score")
 
     # Set x-axis date format
     fig.update_layout(xaxis=dict(tickmode='linear',
@@ -140,7 +160,7 @@ else:
 
 # Check if ticker is provided
 if ticker:
-    try:
+
         news_table = get_news(ticker)
         if news_table:
             parsed_news_df = parse_news(news_table)
@@ -160,7 +180,7 @@ if ticker:
                 st.warning("No news headlines found for the provided ticker.")
         else:
             st.warning("No news found for the provided ticker.")
-    except Exception as e:
+
         st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
 else:
     st.warning("Enter a stock ticker to start analyzing news sentiment.")
