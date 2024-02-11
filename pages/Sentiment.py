@@ -84,7 +84,12 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
 
 # Plot daily sentiment
 def plot_daily_sentiment(parsed_and_scored_news, ticker):
-    mean_scores = parsed_and_scored_news.resample('D').mean()
+    # Select only numeric columns for resampling
+    numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
+    
+    # Calculate mean sentiment scores
+    mean_scores = numeric_columns.resample('D').mean()
+    
     fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Daily Sentiment Scores')
     fig.update_xaxes(title="Date")
     fig.update_yaxes(title="Sentiment Score")
