@@ -177,14 +177,14 @@ if ticker:
         min_start_year = historical_data.index.min().year
         max_start_year = TODAY.year
 
-        # Determine the first possible year with data available on January 1st
-        first_year_with_data = historical_data[historical_data.index.month == 1].index.min().year
+        # Determine the minimum start year with data available for the selected stock
+        min_start_year = historical_data.index.min().year
 
-        # Set default start year to be 1 year ago if possible, otherwise use the first possible year
-        default_start_year = max(TODAY.year - 1, first_year_with_data)
+        # Set default start year to be the minimum available start year
+        default_start_year = max(TODAY.year - 1, min_start_year)
 
         # Slider for choosing the start date
-        start_year = st.slider('Select start year:', TODAY.year - 10, TODAY.year, default_start_year)
+        start_year = st.slider('Select start year:', min_start_year, TODAY.year, default_start_year)
         START = f'{start_year}-01-01'
 
         # Display a loading message while caching historical stock data
