@@ -95,13 +95,11 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
 
     fig.update_layout(title=ticker + ' Hourly Sentiment Scores',
                       xaxis_title="Time",
-                      yaxis_title="Sentiment Score")
-
-    # Set x-axis date format
-    fig.update_layout(xaxis=dict(tickmode='linear',
-                                 tickformat='%Y-%m-%d',
-                                 tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
-
+                      yaxis_title="Sentiment Score",
+                      width=None,
+                      height=None,
+                      margin=dict(l=0, r=0, t=0, b=0),
+                      )
     return fig
 
 
@@ -131,13 +129,11 @@ def plot_daily_sentiment(parsed_and_scored_news, ticker):
 
     fig.update_layout(title=ticker + ' Daily Sentiment Scores',
                       xaxis_title="Date",
-                      yaxis_title="Sentiment Score")
-
-    # Set x-axis date format
-    fig.update_layout(xaxis=dict(tickmode='linear',
-                                 tickformat='%Y-%m-%d',
-                                 tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
-
+                      yaxis_title="Sentiment Score",
+                      width=None,
+                      height=None,
+                      margin=dict(l=0, r=0, t=0, b=0),
+                      )
     return fig
 
 
