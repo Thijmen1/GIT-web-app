@@ -161,32 +161,23 @@ if ticker_option == "Choose from list":
     ticker = st.selectbox('Select stock ticker', stocks)
 else:
     ticker = st.text_input('Enter stock ticker', '').upper()
-    
+
 # Check if a ticker is provided
 if ticker:
     try:
-        # Determine the full company name
-        stock_info = yf.Ticker(ticker)
-        company_name = stock_info.info['longName']
-        
-        # Show selected company name
-        st.subheader(f'{company_name}')
-        
         # Fetch historical data for the selected stock
         historical_data = yf.download(ticker, TODAY - pd.DateOffset(years=10), TODAY)
         min_start_year = historical_data.index.min().year
         max_start_year = TODAY.year
 
-        # Determine the minimum start year with data available for the selected stock
-        min_start_year = historical_data.index.min().year
-        # Check if AAPL is selected and adjust the default start year accordingly
-        if ticker == 'AAPL':
-            default_start_year = max(TODAY.year - 1, min_start_year)
-        else:
-            default_start_year = max(TODAY.year - 5, first_year_with_data)
+        # Determine the first possible year with data available on January 1st
+        first_year_with_data = historical_data[historical_data.index.month == 1].index.min().year
+
+        # Set default start year to be 1 year ago if possible, otherwise use the first possible year
+        default_start_year = max(TODAY.year - 1, first_year_with_data)
 
         # Slider for choosing the start date
-        start_year = st.slider('Select start year:', min_start_year, TODAY.year, default_start_year)
+        start_year = st.slider('Select start year:', TODAY.year - 10, TODAY.year, default_start_year)
         START = f'{start_year}-01-01'
 
         # Display a loading message while caching historical stock data
