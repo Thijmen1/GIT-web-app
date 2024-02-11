@@ -58,7 +58,11 @@ def score_news(parsed_news_df):
 
     parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')
     parsed_and_scored_news = parsed_and_scored_news.set_index('Datetime')
-    parsed_and_scored_news = parsed_and_scored_news.drop(['Date', 'Time'], 1)
+    
+    # Check if 'Date' and 'Time' columns exist before dropping them
+    if 'Date' in parsed_and_scored_news.columns and 'Time' in parsed_and_scored_news.columns:
+        parsed_and_scored_news = parsed_and_scored_news.drop(['Date', 'Time'], axis=1)
+        
     parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "Sentiment Score"})
 
     return parsed_and_scored_news
@@ -138,4 +142,3 @@ if ticker:
             st.warning("No news found for the provided ticker.")
 else:
     st.warning("Enter a stock ticker to start analyzing news sentiment.")
-
