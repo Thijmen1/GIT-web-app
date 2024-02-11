@@ -34,15 +34,15 @@ def parse_news(news_table):
                 date = date_scrape[0]
                 time = date_scrape[1]
 
-            parsed_news.append([date, time, text])
-        except:
-            pass
+            # Specify date and time formats
+            datetime_string = f"{date} {time}"
+            datetime_obj = datetime.datetime.strptime(datetime_string, "%b-%d %I:%M%p")
+            parsed_news.append([datetime_obj, text])
+        except Exception as e:
+            print(f"Error parsing news: {e}")
 
-    columns = ['Date', 'Time', 'Headline']
+    columns = ['Datetime', 'Headline']
     parsed_news_df = pd.DataFrame(parsed_news, columns=columns)
-    parsed_news_df['Date'] = parsed_news_df['Date'].replace("Today", today_string)
-    parsed_news_df['Datetime'] = pd.to_datetime(parsed_news_df['Date'] + ' ' + parsed_news_df['Time'])
-
     return parsed_news_df
 
 
