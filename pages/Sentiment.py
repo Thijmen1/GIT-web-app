@@ -113,7 +113,6 @@ else:
 
 # Check if ticker is provided
 if ticker:
-    try:
         news_table = get_news(ticker)
         if news_table:
             parsed_news_df = parse_news(news_table)
@@ -133,8 +132,6 @@ if ticker:
                 st.warning("No news headlines found for the provided ticker.")
         else:
             st.warning("No news found for the provided ticker.")
-    except Exception as e:
-        st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
 else:
     st.warning("Enter a stock ticker to start analyzing news sentiment.")
 
