@@ -1,186 +1,54 @@
-# Standard Libraries
-import datetime
-
-# External Libraries
-import pandas as pd
 import streamlit as st
-import plotly.graph_objects as go
-import nltk
-from urllib.request import urlopen, Request
-from bs4 import BeautifulSoup
-nltk.download('vader_lexicon')
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import random
 
+st.set_page_config(
+    page_title="Home"
+)
 
-# Function to get news from FinViz
-def get_news(ticker):
-    finviz_url = 'https://finviz.com/quote.ashx?t='
-    url = finviz_url + ticker
-    req = Request(url=url, headers={'User-Agent': 'Mozilla/5.0'})
-    response = urlopen(req)
-    html = BeautifulSoup(response, 'html.parser')
-    news_table = html.find(id='news-table')
-    return news_table
+st.markdown(
+    """
+    ## Stock Forecasting App
 
+    Welcome to the Stock Forecasting App! Developed by the GIT Delta team, this app allows you to explore historical
+    stock data, perform backtesting, and predict future stock prices with advanced forecasting tools.
 
-# Parse news into DataFrame
-def parse_news(news_table):
-    parsed_news = []
+    ### How to Use:
+    1. Navigate to a page on the left-hand menu to get started.
+    2. Select a stock from the dropdown menu or enter a custom ticker.
+    3. Explore the visualizations to analyze historical trends, backtest results, and future predictions.
 
-    for x in news_table.findAll('tr'):
-        try:
-            text = x.a.get_text()
-            date_scrape = x.td.text.split()
+    ### Important:
+    - Keep in mind that all predictions are based on historical data and may not accurately reflect future market
+    conditions.
 
-            if len(date_scrape) == 1:
-                time = date_scrape[0]
-            else:
-                date = date_scrape[0]
-                time = date_scrape[1]
+    If you have any questions or feedback, feel free to reach out! Suggestions are always welcome!
 
-            # Specify date and time formats
-            datetime_string = f"{date}-{time}"
-            datetime_obj = datetime.datetime.strptime(datetime_string, "%b-%d-%y-%I:%M%p")
-            parsed_news.append([datetime_obj, text])
-        except Exception as e:
-            print(f"Error parsing news: {e}")
+    Enjoy exploring the world of stock forecasting!
+    """
+)
 
-    columns = ['Datetime', 'Headline']
-    parsed_news_df = pd.DataFrame(parsed_news, columns=columns)
-    return parsed_news_df
+# Add horizontal line
+st.write("<hr>", unsafe_allow_html=True)
 
+# List of investing-related quotes
+investing_quotes = [
+    ("*\"The stock market is filled with individuals who know the price of everything, but the value of nothing.\"*", "Philip Fisher"),
+    ("*\"The four most dangerous words in investing are: 'This time it's different.\"*'", "Sir John Templeton"),
+    ("*\"In the short run, the market is a voting machine, but in the long run, it is a weighing machine.\"*", "Benjamin Graham"),
+    ("*\"The stock market is a device for transferring money from the impatient to the patient.\"*", "Warren Buffett"),
+    ("*\"It's not how much money you make, but how much money you keep, how hard it works for you, and how many generations you keep it for.\"*", "Robert Kiyosaki"),
+    ("*\"The individual investor should act consistently as an investor and not as a speculator.\"*", "Ben Graham"),
+    ("*\"The goal of the non-professional should not be to pick winners—neither he nor his 'helpers' can do that—but should rather be to own a cross-section of businesses that in aggregate are bound to do well.\"*", "John Bogle"),
+    ("*\"Risk comes from not knowing what you're doing.\"*", "Warren Buffett"),
+    ("*\"Price is what you pay. Value is what you get.\"*", "Warren Buffett"),
+    ("*\"The best investment you can make is in yourself.\"*", "Warren Buffett"),
+    ("*\"The market is a pendulum that forever swings between unsustainable optimism and unjustified pessimism.\"*", "Howard Marks"),
+    ("*\"Investing should be more like watching paint dry or watching grass grow. If you want excitement, take $800 and go to Las Vegas.\"*", "Paul Samuelson"),
+    ("*\"Be fearful when others are greedy. Be greedy when others are fearful.\"*", "Warren Buffett"),
+]
 
-# Score news sentiment
-def score_news(parsed_news_df):
-    vader = SentimentIntensityAnalyzer()
-    scores = parsed_news_df['Headline'].apply(vader.polarity_scores).tolist()
-    scores_df = pd.DataFrame(scores)
-
-    parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')
-    parsed_and_scored_news = parsed_and_scored_news.set_index('Datetime')
-
-    # Check if 'Date' and 'Time' columns exist before dropping them
-    if 'Date' in parsed_and_scored_news.columns and 'Time' in parsed_and_scored_news.columns:
-        parsed_and_scored_news = parsed_and_scored_news.drop(['Date', 'Time'], axis=1)
-
-    parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "Sentiment Score"})
-
-    return parsed_and_scored_news
-
-
-def plot_hourly_sentiment(parsed_and_scored_news, ticker):
-    # Select only numeric columns for resampling
-    numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
-
-    # Calculate mean sentiment scores
-    mean_scores = numeric_columns.resample('H').mean()
-
-    # Define custom color scale for the bar chart
-    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
-
-    fig = go.Figure()
-    fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
-                         marker=dict(color=mean_scores['Sentiment Score'],
-                                     coloraxis="coloraxis")),
-                  )
-
-    fig.update_layout(coloraxis=dict(colorscale=color_scale),
-                      title=ticker + ' Hourly Sentiment Scores',
-                      xaxis_title="Time",
-                      yaxis_title="Sentiment Score")
-
-    # Set x-axis date format
-    fig.update_layout(xaxis=dict(tickmode='linear',
-                                 tickformat='%Y-%m-%d',
-                                 tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
-
-    return fig
-
-def plot_daily_sentiment(parsed_and_scored_news, ticker):
-    # Select only numeric columns for resampling
-    numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
-
-    # Calculate mean sentiment scores
-    mean_scores = numeric_columns.resample('D').mean()
-
-    # Define custom color scale for the bar chart
-    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
-
-    fig = go.Figure()
-    fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
-                         marker=dict(color=mean_scores['Sentiment Score'],
-                                     coloraxis="coloraxis")),
-                  )
-
-    fig.update_layout(coloraxis=dict(colorscale=color_scale),
-                      title=ticker + ' Daily Sentiment Scores',
-                      xaxis_title="Date",
-                      yaxis_title="Sentiment Score")
-
-    # Set x-axis date format
-    fig.update_layout(xaxis=dict(tickmode='linear',
-                                 tickformat='%Y-%m-%d',
-                                 tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
-
-    return fig
-
-
-with st.sidebar.expander("ℹ️ Information", expanded=False):
-    st.write(
-        "This page provides news sentiments, which are determined by analyzing financial headlines scraped from the FinViz website.")
-    st.write("The charts display the average sentiment scores of the selected stock on an hourly and daily basis.")
-
-    # Easter egg
-    st.write("""<style>
-    .stButton>button {
-        opacity: 0.03;
-    }
-    </style>""", unsafe_allow_html=True)
-    if st.button("🥚"):
-        st.write("""<style>
-            .stButton>button {
-                opacity: 1;
-            }
-            </style>""", unsafe_allow_html=True)
-        st.write("Congratulations! You found the Easter egg 🎉")
-        st.balloons()
-
-st.header("News Sentiment Analyzer")
-
-# List of popular stock tickers
-stocks = ('AAPL', 'AMZN', 'BABA', 'GOOGL', 'JNJ', 'JPM', 'META', 'MSFT', 'V')
-
-# User input for selecting a stock either from the list or entering a custom ticker
-ticker_option = st.radio("Select ticker", ("Choose from list", "Enter custom ticker"))
-
-if ticker_option == "Choose from list":
-    ticker = st.selectbox('Select stock ticker', stocks)
-else:
-    ticker = st.text_input('Enter stock ticker', '').upper()
-
-# Check if ticker is provided
-if ticker:
-
-        news_table = get_news(ticker)
-        if news_table:
-            parsed_news_df = parse_news(news_table)
-            if not parsed_news_df.empty:
-                parsed_and_scored_news = score_news(parsed_news_df)
-                fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, ticker)
-                fig_daily = plot_daily_sentiment(parsed_and_scored_news, ticker)
-
-                st.plotly_chart(fig_hourly)
-                st.plotly_chart(fig_daily)
-
-                # Display table with customized column labels
-                st.subheader('**News Headlines and Sentiment Scores**')
-                st.write(parsed_and_scored_news.reset_index().rename(
-                    columns={"Datetime": "Date Time", "compound": "Sentiment Score"}))
-            else:
-                st.warning("No news headlines found for the provided ticker.")
-        else:
-            st.warning("No news found for the provided ticker.")
-
-        st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
-else:
-    st.warning("Enter a stock ticker to start analyzing news sentiment.")
+# Display a random investing-related quote
+random_quote, author = random.choice(investing_quotes)
+st.write("")
+st.write(f"{random_quote}")
+st.write(f"<div style='text-align:right'>{author}</div>", unsafe_allow_html=True)
