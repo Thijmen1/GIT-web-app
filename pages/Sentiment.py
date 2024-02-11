@@ -173,6 +173,13 @@ if ticker_option == "Choose from list":
 else:
     ticker = st.text_input('Enter stock ticker', '').upper()
 
+# Determine the full company name
+stock_info = yf.Ticker(selected_stock)
+company_name = stock_info.info['longName']
+
+# Show selected company name
+st.subheader(f'{company_name}')
+
 # Check if ticker is provided
 if ticker:
     try:
