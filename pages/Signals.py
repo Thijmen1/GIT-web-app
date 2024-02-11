@@ -142,6 +142,7 @@ def plot_rsi_analysis(stock_data):
 
 with st.sidebar.expander("ℹ️ Information", expanded=False):
     st.write("This page analyzes trading signals derived from various technical indicators to provide insights into market trends.")
+    st.write("Technical indicators are mathematical calculations based on historical price, volume, or open interest data.")
     st.write("These indicators can help identify potential buy or sell signals, trend reversals, or overbought/oversold conditions.")
 
 # Get today's date
