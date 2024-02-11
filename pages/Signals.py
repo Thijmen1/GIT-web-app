@@ -179,9 +179,11 @@ if ticker:
 
         # Determine the minimum start year with data available for the selected stock
         min_start_year = historical_data.index.min().year
-
-        # Set default start year to be the minimum available start year
-        default_start_year = max(TODAY.year - 1, min_start_year)
+        # Check if AAPL is selected and adjust the default start year accordingly
+        if ticker == 'AAPL':
+            default_start_year = max(TODAY.year - 1, min_start_year)
+        else:
+            default_start_year = max(TODAY.year - 5, first_year_with_data)
 
         # Slider for choosing the start date
         start_year = st.slider('Select start year:', min_start_year, TODAY.year, default_start_year)
