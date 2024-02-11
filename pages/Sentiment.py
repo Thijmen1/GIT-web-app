@@ -69,34 +69,40 @@ def score_news(parsed_news_df):
 
 # Plot hourly sentiment
 def plot_hourly_sentiment(parsed_and_scored_news, ticker):
-    mean_scores = parsed_and_scored_news.resample('H').mean()
+    # Select only numeric columns for resampling
+    numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
+    
+    # Calculate mean sentiment scores
+    mean_scores = numeric_columns.resample('H').mean()
+    
     fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Hourly Sentiment Scores')
     fig.update_xaxes(title="Time")
     fig.update_yaxes(title="Sentiment Score")
     
-    # Set x-axis tick labels to date only
-    fig.update_layout(xaxis=dict(
-        tickmode='array',
-        tickvals=mean_scores.index,
-        ticktext=mean_scores.index.strftime('%Y-%m-%d %I %p')
-    ))
+    # Set x-axis date format
+    fig.update_layout(xaxis=dict(tickmode='linear', 
+                                  tickformat='%Y-%m-%d',
+                                  tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
     
     return fig
 
 
 # Plot daily sentiment
 def plot_daily_sentiment(parsed_and_scored_news, ticker):
-    mean_scores = parsed_and_scored_news.resample('D').mean()
+    # Select only numeric columns for resampling
+    numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
+    
+    # Calculate mean sentiment scores
+    mean_scores = numeric_columns.resample('D').mean()
+    
     fig = px.bar(mean_scores, x=mean_scores.index, y='Sentiment Score', title=ticker + ' Daily Sentiment Scores')
     fig.update_xaxes(title="Date")
     fig.update_yaxes(title="Sentiment Score")
     
-    # Set x-axis tick labels to date only
-    fig.update_layout(xaxis=dict(
-        tickmode='array',
-        tickvals=mean_scores.index,
-        ticktext=mean_scores.index.strftime('%Y-%m-%d')
-    ))
+    # Set x-axis date format
+    fig.update_layout(xaxis=dict(tickmode='linear', 
+                                  tickformat='%Y-%m-%d',
+                                  tickvals=pd.date_range(mean_scores.index.min(), mean_scores.index.max(), freq='D')))
     
     return fig
 
