@@ -35,8 +35,8 @@ def parse_news(news_table):
                 time = date_scrape[1]
 
             # Specify date and time formats
-            datetime_string = f"{date} {time}"
-            datetime_obj = datetime.datetime.strptime(datetime_string, "%b-%d %I:%M%p")
+            datetime_string = f"{date}-{time}"
+            datetime_obj = datetime.datetime.strptime(datetime_string, "%b-%d-%y-%I:%M%p")
             parsed_news.append([datetime_obj, text])
         except Exception as e:
             print(f"Error parsing news: {e}")
