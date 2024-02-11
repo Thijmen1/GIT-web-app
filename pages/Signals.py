@@ -161,17 +161,17 @@ if ticker_option == "Choose from list":
     ticker = st.selectbox('Select stock ticker', stocks)
 else:
     ticker = st.text_input('Enter stock ticker', '').upper()
-
-# Determine the full company name
-stock_info = yf.Ticker(ticker)
-company_name = stock_info.info['longName']
-
-# Show selected company name
-st.subheader(f'{company_name}')
-
+    
 # Check if a ticker is provided
 if ticker:
     try:
+        # Determine the full company name
+        stock_info = yf.Ticker(ticker)
+        company_name = stock_info.info['longName']
+        
+        # Show selected company name
+        st.subheader(f'{company_name}')
+        
         # Fetch historical data for the selected stock
         historical_data = yf.download(ticker, TODAY - pd.DateOffset(years=10), TODAY)
         min_start_year = historical_data.index.min().year
