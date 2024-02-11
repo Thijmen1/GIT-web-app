@@ -26,7 +26,7 @@ def plot_raw_data():
     fig.add_trace(go.Scatter(x=data.index, y=data['Open'], name="Open"))
     fig.add_trace(go.Scatter(x=data.index, y=data['Close'], name="Close"))
     fig.layout.update(
-        title_text=f'Stock Price since {START}',
+        title_text=f'{ticker} Stock Price',
         xaxis_title='Date',
         yaxis_title='Price (USD)',
         xaxis_rangeslider_visible=True,
@@ -107,7 +107,7 @@ def plot_sr_zones_with_signals(stock_data, num_clusters):
                               name='Sell Signal'))
 
     fig1.update_layout(xaxis_title='Date', yaxis_title='Price (USD)', showlegend=True, height=600,
-                       title_text="Stock Price with SR Zones, Bollinger Bands, and Signals",
+                       title_text=f"{ticker} Stock Price with SR Zones, Bollinger Bands, and Signals",
                        xaxis_rangeslider_visible=True)
     st.plotly_chart(fig1, use_container_width=True)
 
@@ -135,7 +135,7 @@ def plot_rsi_analysis(stock_data):
     # Customize y-axis ticks
     fig2.update_yaxes(tickvals=[30, 50, 70], ticktext=['30', '50', '70'])
 
-    fig2.update_layout(xaxis_title='Date', yaxis_title='RSI', showlegend=True, height=500, title_text="RSI Analysis",
+    fig2.update_layout(xaxis_title='Date', yaxis_title='RSI', showlegend=True, height=500, title_text=f"{ticker} RSI Analysis",
                        xaxis_rangeslider_visible=True)
     st.plotly_chart(fig2, use_container_width=True)
 
