@@ -117,20 +117,24 @@ if ticker:
         news_table = get_news(ticker)
         if news_table:
             parsed_news_df = parse_news(news_table)
-            parsed_and_scored_news = score_news(parsed_news_df)
-            fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, ticker)
-            fig_daily = plot_daily_sentiment(parsed_and_scored_news, ticker)
+            if not parsed_news_df.empty:
+                parsed_and_scored_news = score_news(parsed_news_df)
+                fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, ticker)
+                fig_daily = plot_daily_sentiment(parsed_and_scored_news, ticker)
 
-            st.plotly_chart(fig_hourly)
-            st.plotly_chart(fig_daily)
+                st.plotly_chart(fig_hourly)
+                st.plotly_chart(fig_daily)
 
-            # Display table with customized column labels
-            st.subheader('**News Headlines and Sentiment Scores**')
-            st.write(parsed_and_scored_news.reset_index().rename(
-                columns={"Datetime": "Date Time", "compound": "Sentiment Score"}))
+                # Display table with customized column labels
+                st.subheader('**News Headlines and Sentiment Scores**')
+                st.write(parsed_and_scored_news.reset_index().rename(
+                    columns={"Datetime": "Date Time", "compound": "Sentiment Score"}))
+            else:
+                st.warning("No news headlines found for the provided ticker.")
         else:
             st.warning("No news found for the provided ticker.")
     except Exception as e:
         st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
 else:
     st.warning("Enter a stock ticker to start analyzing news sentiment.")
+
