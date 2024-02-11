@@ -13,6 +13,7 @@ import ta
 
 
 # Function to load historical stock data
+@st.cache_data
 def load_data(ticker, start_date, end_date):
     data = yf.download(ticker, start_date, end_date)
     data.reset_index(inplace=True)
@@ -25,7 +26,7 @@ def plot_raw_data():
     fig.add_trace(go.Scatter(x=data.index, y=data['Open'], name="Open"))
     fig.add_trace(go.Scatter(x=data.index, y=data['Close'], name="Close"))
     fig.layout.update(
-        title_text=f'Stock Price since {START}',
+        title_text=f'{ticker} Stock Price',
         xaxis_title='Date',
         yaxis_title='Price (USD)',
         xaxis_rangeslider_visible=True,
@@ -106,7 +107,7 @@ def plot_sr_zones_with_signals(stock_data, num_clusters):
                               name='Sell Signal'))
 
     fig1.update_layout(xaxis_title='Date', yaxis_title='Price (USD)', showlegend=True, height=600,
-                       title_text="Stock Price with SR Zones, Bollinger Bands, and Signals",
+                       title_text=f"{ticker} Stock Price with SR Zones, Bollinger Bands, and Signals",
                        xaxis_rangeslider_visible=True)
     st.plotly_chart(fig1, use_container_width=True)
 
@@ -134,74 +135,78 @@ def plot_rsi_analysis(stock_data):
     # Customize y-axis ticks
     fig2.update_yaxes(tickvals=[30, 50, 70], ticktext=['30', '50', '70'])
 
-    fig2.update_layout(xaxis_title='Date', yaxis_title='RSI', showlegend=True, height=500, title_text="RSI Analysis",
+    fig2.update_layout(xaxis_title='Date', yaxis_title='RSI', showlegend=True, height=500, title_text=f"{ticker} RSI Analysis",
                        xaxis_rangeslider_visible=True)
     st.plotly_chart(fig2, use_container_width=True)
 
+
+with st.sidebar.expander("ℹ️ Information", expanded=False):
+    st.write("This page analyzes trading signals derived from various technical indicators to provide insights into market trends.")
+    st.write("Technical indicators are mathematical calculations based on historical price, volume, or open interest data.")
+    st.write("These indicators can help identify potential buy or sell signals, trend reversals, or overbought/oversold conditions.")
 
 # Get today's date
 TODAY = date.today()
 
 # Set up Streamlit app title
-st.title('Buy & Sell Signals')
+st.header('Buy & Sell Signals')
 
-# List of popular stock tickers to choose from
+# List of popular stock tickers
 stocks = ('AAPL', 'AMZN', 'BABA', 'GOOGL', 'JNJ', 'JPM', 'META', 'MSFT', 'V')
 
 # User input for selecting a stock either from the list or entering a custom ticker
-user_input = st.radio("Select data source:", ("Choose from list", "Enter ticker"))
-if user_input == "Choose from list":
-    selected_stock = st.selectbox('Select dataset for prediction', stocks)
+ticker_option = st.radio("Select ticker", ("Choose from list", "Enter custom ticker"))
+
+if ticker_option == "Choose from list":
+    ticker = st.selectbox('Select stock ticker', stocks)
 else:
-    custom_ticker = st.text_input("Enter ticker:")
-    selected_stock = custom_ticker.upper()
+    ticker = st.text_input('Enter stock ticker', '').upper()
 
-# Determine the full company name
-stock_info = yf.Ticker(selected_stock)
-company_name = stock_info.info['longName']
+# Check if a ticker is provided
+if ticker:
+    try:
+        # Fetch historical data for the selected stock
+        historical_data = yf.download(ticker, TODAY - pd.DateOffset(years=10), TODAY)
+        min_start_year = historical_data.index.min().year
+        max_start_year = TODAY.year
 
-# Show selected company name
-st.subheader(f'{company_name}')
+        # Determine the first possible year with data available on January 1st
+        first_year_with_data = historical_data[historical_data.index.month == 1].index.min().year
 
-# Fetch historical data for the selected stock
-historical_data = yf.download(selected_stock, TODAY - pd.DateOffset(years=20), TODAY)
-min_start_year = historical_data.index.min().year
-max_start_year = TODAY.year
+        # Set default start year to be 1 year ago if possible, otherwise use the first possible year
+        default_start_year = max(TODAY.year - 1, first_year_with_data)
 
-# Determine the first possible year with data available on January 1st
-first_year_with_data = historical_data[historical_data.index.month == 1].index.min().year
+        # Slider for choosing the start date
+        start_year = st.slider('Select start year:', TODAY.year - 10, TODAY.year, default_start_year)
+        START = f'{start_year}-01-01'
 
-# Set default start year to be 1 year ago if possible, otherwise use the first possible year
-default_start_year = max(TODAY.year - 1, first_year_with_data)
+        # Display a loading message while caching historical stock data
+        data = load_data(ticker, START, TODAY.strftime("%Y-%m-%d"))
 
-# Slider for choosing the start date
-start_year = st.slider('Select start year:', TODAY.year - 20, TODAY.year, default_start_year)
-START = f'{start_year}-01-01'
+        # Plot raw data
+        plot_raw_data()
 
-# Display a loading message while caching historical stock data
-data_load_state = st.text('Loading data...')
-data = load_data(selected_stock, START, TODAY.strftime("%Y-%m-%d"))
-data_load_state.text('Loading data... done!')
+        # Calculate RSI
+        data['RSI'] = ta.momentum.RSIIndicator(data['Close'], window=14).rsi()
 
-# Plot raw data
-plot_raw_data()
+        # Calculate Bollinger Bands
+        data['MA20'] = data['Close'].rolling(window=20).mean()
+        data['UpperBand'] = data['MA20'] + 2 * data['Close'].rolling(window=20).std()
+        data['LowerBand'] = data['MA20'] - 2 * data['Close'].rolling(window=20).std()
 
-# Calculate RSI
-data['RSI'] = ta.momentum.RSIIndicator(data['Close'], window=14).rsi()
+        # Find support and resistance zones and add them as columns
+        num_clusters = 5  # Set the desired number of clusters (SR zones)
+        Zonewidth = 15  # Set the width of the SD zones. This can also be a percentage of the current stock price.
+        data = find_sr_zones(data, num_clusters)
 
-# Calculate Bollinger Bands
-data['MA20'] = data['Close'].rolling(window=20).mean()
-data['UpperBand'] = data['MA20'] + 2 * data['Close'].rolling(window=20).std()
-data['LowerBand'] = data['MA20'] - 2 * data['Close'].rolling(window=20).std()
+        # Generate trading signals
+        data = generate_trading_signals(data, num_clusters)
 
-# Find support and resistance zones and add them as columns
-num_clusters = 5  # Set the desired number of clusters (SR zones)
-Zonewidth = 15  # Set the width of the SD zones. This can also be a percentage of the current stock price.
-data = find_sr_zones(data, num_clusters)
+        # Plot stock prices with SR zones, Bollinger Bands, and RSI
+        plot_sr_zones_with_signals(data, num_clusters)
+        plot_rsi_analysis(data)
 
-# Generate trading signals
-data = generate_trading_signals(data, num_clusters)
-
-# Plot stock prices with SR zones, Bollinger Bands, and RSI
-plot_sr_zones_with_signals(data, num_clusters)
-plot_rsi_analysis(data)
+    except Exception as e:
+        st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
+else:
+    st.warning("Enter a stock ticker to start analyzing buy and sell signals.")
