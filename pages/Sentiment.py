@@ -174,17 +174,17 @@ if ticker_option == "Choose from list":
 else:
     ticker = st.text_input('Enter stock ticker', '').upper()
 
-# Determine the full company name
-stock_info = yf.Ticker(ticker)
-company_name = stock_info.info['longName']
-
-# Show selected company name
-st.subheader(f'{company_name}')
-
 # Check if ticker is provided
 if ticker:
     try:
+        # Determine the full company name
+        stock_info = yf.Ticker(ticker)
+        company_name = stock_info.info['longName']
+        
+        # Show selected company name
+        st.subheader(f'{company_name}')
         news_table = get_news(ticker)
+        
         if news_table:
             parsed_news_df = parse_news(news_table)
             if not parsed_news_df.empty:
