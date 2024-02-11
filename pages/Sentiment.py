@@ -68,6 +68,7 @@ def score_news(parsed_news_df):
     return parsed_and_scored_news
 
 
+# Plot hourly sentiment
 def plot_hourly_sentiment(parsed_and_scored_news, ticker):
     # Select only numeric columns for resampling
     numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
@@ -76,16 +77,22 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
     mean_scores = numeric_columns.resample('H').mean()
 
     # Define custom color scale for the bar chart
-    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
+    def get_color(score):
+        if score > 0:
+            return f'rgba(0, {int(score*255)}, 0, 0.7)'  # Green gradient
+        elif score < 0:
+            return f'rgba({int(-score*255)}, 0, 0, 0.7)'  # Red gradient
+        else:
+            return 'rgba(255, 255, 255, 0.7)'  # White for neutral sentiment
+
+    colors = mean_scores['Sentiment Score'].apply(get_color)
 
     fig = go.Figure()
     fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
-                         marker=dict(color=mean_scores['Sentiment Score'],
-                                     coloraxis="coloraxis")),
+                         marker=dict(color=colors)),
                   )
 
-    fig.update_layout(coloraxis=dict(colorscale=color_scale),
-                      title=ticker + ' Hourly Sentiment Scores',
+    fig.update_layout(title=ticker + ' Hourly Sentiment Scores',
                       xaxis_title="Time",
                       yaxis_title="Sentiment Score")
 
@@ -96,6 +103,8 @@ def plot_hourly_sentiment(parsed_and_scored_news, ticker):
 
     return fig
 
+
+# Plot daily sentiment
 def plot_daily_sentiment(parsed_and_scored_news, ticker):
     # Select only numeric columns for resampling
     numeric_columns = parsed_and_scored_news.select_dtypes(include='number')
@@ -104,16 +113,22 @@ def plot_daily_sentiment(parsed_and_scored_news, ticker):
     mean_scores = numeric_columns.resample('D').mean()
 
     # Define custom color scale for the bar chart
-    color_scale = 'RdYlGn'  # Red-Yellow-Green colorscale
+    def get_color(score):
+        if score > 0:
+            return f'rgba(0, {int(score*255)}, 0, 0.7)'  # Green gradient
+        elif score < 0:
+            return f'rgba({int(-score*255)}, 0, 0, 0.7)'  # Red gradient
+        else:
+            return 'rgba(255, 255, 255, 0.7)'  # White for neutral sentiment
+
+    colors = mean_scores['Sentiment Score'].apply(get_color)
 
     fig = go.Figure()
     fig.add_trace(go.Bar(x=mean_scores.index, y=mean_scores['Sentiment Score'],
-                         marker=dict(color=mean_scores['Sentiment Score'],
-                                     coloraxis="coloraxis")),
+                         marker=dict(color=colors)),
                   )
 
-    fig.update_layout(coloraxis=dict(colorscale=color_scale),
-                      title=ticker + ' Daily Sentiment Scores',
+    fig.update_layout(title=ticker + ' Daily Sentiment Scores',
                       xaxis_title="Date",
                       yaxis_title="Sentiment Score")
 
