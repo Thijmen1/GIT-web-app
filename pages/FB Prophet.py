@@ -24,7 +24,7 @@ def plot_raw_data():
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Open'], name="Open"))
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Close'], name="Close"))
     fig.layout.update(
-        title_text=f'Stock Price since {START}',
+        title_text=f'{ticker} Stock Price',
         xaxis_title='Date',
         yaxis_title='Price (USD)',
         xaxis_rangeslider_visible=True,
