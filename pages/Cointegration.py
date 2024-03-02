@@ -61,6 +61,7 @@ def get_symbols(symbols, ohlc, begin_date=None, end_date=None):
     return data.dropna(axis=1)
 
 
+
 # Function to find cointegrated pairs
 def find_cointegrated_pairs(dataframe, cointegration_threshold=0.05, top_n=10):
     n = dataframe.shape[1]  # the length of the dataframe
@@ -115,7 +116,7 @@ def half_life(spread):
 # Function to backtest the strategy for a pair
 def backtest_pair(stock1_price_data, stock2_price_data):
     x = stock1_price_data
-    y = stock2_price_data 
+    y = stock2_price_data
 
     # Run regression (including Kalman Filter) to find hedge ratio and then create spread series
     df1 = pd.DataFrame({'y': y, 'x': x})
@@ -281,14 +282,16 @@ st.subheader(f'Top {top_n_pairs} Cointegrated Pairs')
 # Show the pairs with a link to more detailed analysis
 for i, pair in enumerate(top_pairs.iterrows(), start=1):
     stock1, stock2, pvalue, correlation, stock1_price_data, stock2_price_data = pair[1]
+    pair_id = f"{stock1.lower()}-{stock2.lower()}"  # Generate unique id for each pair with lowercase letters and hyphens
     st.write(f"{i}. **Pair:** {stock1} - {stock2}, **P-Value:** {pvalue:.4f}, **Correlation:** {correlation:.4f}")
-    st.write(f"[*Analyze Pair*](#{stock1}_{stock2})")
+    st.write(f"[*Analyze Pair*](#{pair_id})")
     st.write('---')
 
 # Display detailed analysis for each pair
 for pair in top_pairs.iterrows():
     stock1, stock2, _, _, stock1_price_data, stock2_price_data = pair[1]
-    st.write(f'<h2 id="{stock1}_{stock2}">{stock1} - {stock2}</h2>', unsafe_allow_html=True)
+    pair_id = f"{stock1.lower()}-{stock2.lower()}"
+    st.write(f'<h2 id="{pair_id}">{stock1} - {stock2}</h2>', unsafe_allow_html=True)
     st.write(f"**Pair:** {stock1} - {stock2}")
     st.write(f"**P-Value:** {pvalue:.4f}")
     st.write(f"**Correlation:** {correlation:.4f}")
