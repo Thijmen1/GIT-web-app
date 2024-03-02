@@ -244,7 +244,7 @@ st.sidebar.header('Parameters')
 sector = st.sidebar.radio('Select Sector', ('Healthcare', 'Energy', 'Utility', 'Financial'))
 cointegration_threshold = st.sidebar.slider('Cointegration Threshold', 0.01, 0.5, 0.05, 0.01)
 top_n_pairs = st.sidebar.slider('Top N Pairs', 5, 50, 10, 5)
-start_date = st.sidebar.date_input('Start Date', value=pd.to_datetime('2021-01-01'))
+start_date = st.sidebar.date_input('Start Date', value=pd.to_datetime('2023-01-01'))
 end_date = st.sidebar.date_input('End Date', value=pd.to_datetime('2023-12-31'))
 
 # Fetch data for selected sector
