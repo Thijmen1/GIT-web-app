@@ -7,27 +7,16 @@ from filterpy.kalman import KalmanFilter
 from math import sqrt
 import plotly.graph_objects as go
 import warnings
+import time
 
 # Set display options and ignore warnings
 pd.set_option('display.max_columns', None)
 warnings.filterwarnings('ignore')
 
 # Define stock symbols for different sectors
-Symbols_healthcare = ['A', 'ABBV', 'ABT', 'ALGN', 'AMGN', 'BAX', 'BDX', 'BIIB',
-                      'BIO', 'BMY', 'BSX', 'CAH', 'CI', 'CNC', 'COO', 'COR', 'CRL',
-                      'CTLT', 'CVS', 'DGX', 'DHR', 'DVA', 'DXCM', 'ELV', 'EW', 'GEHC',
-                      'GILD', 'HCA', 'HOLX', 'HSIC', 'HUM', 'IDXX', 'ILMN', 'INCY', 'IQV',
-                      'ISRG', 'JNJ', 'LH', 'LLY', 'MCK', 'MDT', 'MOH', 'MRK', 'MRNA', 'MTD',
-                      'PFE', 'PODD', 'REGN', 'RMD', 'RVTY', 'STE', 'SYK', 'TECH', 'TFX', 'TMO',
-                      'UHS', 'UNH', 'VRTX', 'VTRS', 'WAT', 'WST', 'XRAY', 'ZBH', 'ZTS']
-
 Symbols_energy = ["APA", "BKR", "COP", "CTRA", "CVX", "DVN", "EOG", "EQT", "FANG",
                   "HAL", "HES", "KMI", "MPC", "MRO", "OKE", "OXY", "PSX", "PXD", "SLB",
                   "TRGP", "VLO", "WMB", "XOM"]
-
-Symbols_utility = ["AES", "AEP", "ATO", "AWK", "CMS", "CNP", "CEG", "D", "DUK",
-                   "DTE", "ED", "EIX", "ES", "ETR", "EVRG", "EXC", "FE", "LNT", "NEE",
-                   "NI", "NRG", "PCG", "PEG", "PNW", "PPL", "SRE", "SO", "WEC", "XEL"]
 
 Symbols_financial = ["ACGL", "AFL", "AIG", "AIZ", "AJG", "ALL", "AMP", "AON",
                      "AXP", "BAC", "BEN", "BK", "BLK", "BRK.B", "BRO", "BX", "C",
@@ -37,6 +26,19 @@ Symbols_financial = ["ACGL", "AFL", "AIG", "AIZ", "AJG", "ALL", "AMP", "AON",
                      "MMC", "MSCI", "MS", "MTB", "NDAQ", "NTRS", "PFG", "PGR", "PNC",
                      "PRU", "PYPL", "RF", "RJF", "SCHW", "SPGI", "STT", "SYF", "TFC",
                      "TROW", "TRV", "USB", "V", "VTRS", "WFC", "WTW", "WRB", "ZION"]
+
+Symbols_healthcare = ['A', 'ABBV', 'ABT', 'ALGN', 'AMGN', 'BAX', 'BDX', 'BIIB',
+                      'BIO', 'BMY', 'BSX', 'CAH', 'CI', 'CNC', 'COO', 'COR', 'CRL',
+                      'CTLT', 'CVS', 'DGX', 'DHR', 'DVA', 'DXCM', 'ELV', 'EW', 'GEHC',
+                      'GILD', 'HCA', 'HOLX', 'HSIC', 'HUM', 'IDXX', 'ILMN', 'INCY', 'IQV',
+                      'ISRG', 'JNJ', 'LH', 'LLY', 'MCK', 'MDT', 'MOH', 'MRK', 'MRNA', 'MTD',
+                      'PFE', 'PODD', 'REGN', 'RMD', 'RVTY', 'STE', 'SYK', 'TECH', 'TFX', 'TMO',
+                      'UHS', 'UNH', 'VRTX', 'VTRS', 'WAT', 'WST', 'XRAY', 'ZBH', 'ZTS']
+
+Symbols_utility = ["AES", "AEP", "ATO", "AWK", "CMS", "CNP", "CEG", "D", "DUK",
+                   "DTE", "ED", "EIX", "ES", "ETR", "EVRG", "EXC", "FE", "LNT", "NEE",
+                   "NI", "NRG", "PCG", "PEG", "PNW", "PPL", "SRE", "SO", "WEC", "XEL"]
+
 
 # Function to fetch historical stock prices
 def get_symbols(symbols, ohlc, begin_date=None, end_date=None):
@@ -59,7 +61,6 @@ def get_symbols(symbols, ohlc, begin_date=None, end_date=None):
     data.columns = new_symbols
     data = data.dropna(axis=1)
     return data.dropna(axis=1)
-
 
 
 # Function to find cointegrated pairs
@@ -244,7 +245,7 @@ st.title('Pairs Trading Strategy Backtester')
 
 # Sidebar
 st.sidebar.header('Parameters')
-sector = st.sidebar.radio('Select Sector', ('Healthcare', 'Energy', 'Utility', 'Financial'))
+sector = st.sidebar.radio('Select Sector', ('Energy', 'Financial', 'Healthcare', 'Utility'))
 cointegration_threshold = st.sidebar.slider('Cointegration Threshold', 0.01, 0.5, 0.05, 0.01)
 top_n_pairs = st.sidebar.slider('Top N Pairs', 5, 50, 10, 5)
 start_date = st.sidebar.date_input('Start Date', value=pd.to_datetime('2023-01-01'))
