@@ -50,6 +50,8 @@ def get_symbols(symbols, ohlc, begin_date=None, end_date=None):
             out.append(df.astype('float'))
         except KeyError:
             st.warning(f"No data available for symbol: {symbol}. Skipping...")
+        except Exception as e:
+            st.error(f"An error occurred while fetching data for symbol {symbol}: {e}")
     if not out:
         st.error("No data available for any symbol. Please adjust the date range.")
         return None
