@@ -146,21 +146,6 @@ with st.sidebar.expander("ℹ️ Information", expanded=False):
         "This page provides news sentiments, which are determined by analyzing financial headlines scraped from the FinViz website.")
     st.write("The charts display the average sentiment scores of the selected stock on an hourly and daily basis.")
 
-    # Easter egg
-    st.write("""<style>
-    .stButton>button {
-        opacity: 0.03;
-    }
-    </style>""", unsafe_allow_html=True)
-    if st.button("🥚"):
-        st.write("""<style>
-            .stButton>button {
-                opacity: 1;
-            }
-            </style>""", unsafe_allow_html=True)
-        st.write("Congratulations! You found the Easter egg 🎉")
-        st.balloons()
-
 st.header("News Sentiment Analyzer")
 
 # List of popular stock tickers
