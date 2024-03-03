@@ -4,3 +4,5 @@ plotly==5.18.0
 scikit-learn
 ta
 nltk==3.8.1
+filterpy==1.4.5
+statsmodels==0.14.0
