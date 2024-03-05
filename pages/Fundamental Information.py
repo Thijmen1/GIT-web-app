@@ -8,15 +8,12 @@ Created on Sun Mar  3 14:50:40 2024
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import streamlit as st
 
-ticker_list = ["JPM"]
-values = []
-
-for current_ticker in ticker_list:
+def get_stock_data(current_ticker):
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
     url_2 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/dcf-valuation/base-case"
 
-    # Read the HTML content from the webpage
     html_1 = requests.get(url_1).text
     html_2 = requests.get(url_2).text
 
@@ -39,18 +36,28 @@ for current_ticker in ticker_list:
     signal_intrinsic = "Undervalued" if numeric_int_value > numeric_current_price else "Overvalued"
     signal_dcf = "Buy" if numeric_dcf_value > numeric_current_price else "Sell"
 
-    # Create a list with the current values
-    current_data = {
+    return {
         'Stock': current_ticker,
         'Current Price': numeric_current_price,
         'Intrinsic Value':  numeric_int_value,
         'DCF Value': numeric_dcf_value,
         'Intrinsic/price': signal_intrinsic,
-        'DCF/price ':signal_dcf
+        'DCF/price': signal_dcf
     }
 
-    # Append the list to the main list
-    values.append(current_data)
+def main():
+    st.title("Stock Analysis")
 
-# Print the resulting list
-print(values)
+    ticker_list = ["JPM"]  # Update with more tickers if needed
+
+    for current_ticker in ticker_list:
+        data = get_stock_data(current_ticker)
+        st.subheader(f"Stock: {data['Stock']}")
+        st.write(f"Current Price: {data['Current Price']}")
+        st.write(f"Intrinsic Value: {data['Intrinsic Value']}")
+        st.write(f"DCF Value: {data['DCF Value']}")
+        st.write(f"Intrinsic/Price: {data['Intrinsic/price']}")
+        st.write(f"DCF/Price: {data['DCF/price']}")
+
+if __name__ == "__main__":
+    main()
