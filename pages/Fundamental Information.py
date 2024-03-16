@@ -74,7 +74,7 @@ def main():
         
             df = get_values(ticker)  # Call get_values function to fetch data
             df = df.transpose()
-            
+            st.header(company_name)
             st.write(df)
             
         except Exception as e:
