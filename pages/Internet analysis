@@ -1,0 +1,87 @@
+import streamlit as st
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import yahoofinance as yf
+
+cases = ["base", "bull", "bear"]
+ticker_list = ["JPM", "AAPL"]  # Add more tickers as needed
+
+# Create an empty list to store the data
+values = []
+
+def get_values(current_ticker):
+    url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
+    current_data = {"Ticker": current_ticker}
+
+    # Read the HTML content from the summary webpage
+    html_1 = requests.get(url_1).text
+    soup_1 = BeautifulSoup(html_1, 'html.parser')
+
+    selector_int_price = "#main > div:nth-child(4) > div:nth-child(1) > div > div:nth-child(3) > div > div > div.six.wide.computer.sixteen.wide.tablet.center.aligned.flex-column.mobile-no-horizontal-padding.column.appear.only-opacity > div:nth-child(1) > div > div:nth-child(1) > div.ui.intrinsic-value-color.no-margin.valuation-scenario-value.header.restriction-sensitive-data"
+    selector_current = "#main > div:nth-child(4) > div:nth-child(1) > div > div:nth-child(3) > div > div > div.ten.wide.computer.sixteen.wide.tablet.flex-column.mobile-no-horizontal-padding.column > div:nth-child(1) > div > div:nth-child(2) > p > span:nth-child(5)"
+    
+    # Get the current price
+    current_price = soup_1.select_one(selector_current).get_text()
+    numeric_current_price = float(''.join(c for c in current_price if c.isdigit() or c == '.'))
+
+    # Get the intrinsic value
+    int_value = soup_1.select_one(selector_int_price).get_text()
+    numeric_int_value = float(''.join(c for c in int_value if c.isdigit() or c == '.'))
+
+    # Store the base case values
+    current_data["Current_Price"] = numeric_current_price
+    current_data["Intrinsic_Value_base"] = numeric_int_value
+    current_data["Signal_intrinsic"] = "Undervalued" if numeric_int_value > numeric_current_price else "Overvalued"
+
+    # Append the dictionary to the list
+    values.append(current_data)
+
+    # Fetch data for other cases
+    for case in cases[0:]:
+        url_2 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/dcf-valuation/{case}-case"
+        html_2 = requests.get(url_2).text
+        soup_2 = BeautifulSoup(html_2, 'html.parser')
+
+        selector_dcf = "#scenario-valuation > div.no-sticky-part > div > div:nth-child(1) > div > div:nth-child(1) > div.ui.dcf-value-color.no-margin.valuation-scenario-value.header.restriction-sensitive-data"
+        dcf_value = soup_2.select_one(selector_dcf).get_text()
+        numeric_dcf_value = float(''.join(c for c in dcf_value if c.isdigit() or c == '.'))
+
+        current_data[f"DCF_value_{case}"] = numeric_dcf_value
+        current_data[f"Signal_DCF_{case}"] = "Undervalued" if numeric_dcf_value > numeric_current_price else "Overvalued"
+
+
+
+
+
+# Create a DataFrame from the list of dictionaries
+
+
+st.header('Internet analysis')
+
+# User input for selecting a stock either from the list or entering a custom ticker
+ticker_option = st.radio("Select ticker", ( "Enter custom ticker"))
+
+ticker = st.text_input('Enter stock ticker', '').upper()
+# Check if ticker is provided
+if ticker:
+    try:
+        # Determine the full company name
+        stock_info = yf.Ticker(ticker)
+        company_name = stock_info.info['longName']
+
+        # Show selected company name
+        st.subheader(f'{company_name}')
+        
+        get_values(ticker)
+        df_values = pd.DataFrame(values)
+        
+        st.subheader("INFO")
+        print(df_values)
+        
+
+
+    except Exception as e:
+        st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
+else:
+    st.warning("Enter a stock ticker to start forecasting.")
