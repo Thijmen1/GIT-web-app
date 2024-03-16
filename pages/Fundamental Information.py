@@ -73,7 +73,7 @@ if ticker:
         company_name = stock_info.info['longName']
     
         df = get_values(ticker)  # Call get_values function to fetch data
-        return df
+        st.write(df)
     except Exception as e:
         st.error(f"An error occurred: {e}")     
 if __name__ == "__main__":
