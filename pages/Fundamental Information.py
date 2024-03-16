@@ -74,8 +74,6 @@ def main():
     
             df = get_values(ticker)  # Call get_values function to fetch data
             return df
-    except Exception as e:
-        st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
 else:
     st.warning("Enter a stock ticker to start forecasting.")        
 if __name__ == "__main__":
