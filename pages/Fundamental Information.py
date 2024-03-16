@@ -70,6 +70,9 @@ def main():
         ticker = ticker.upper()  # Convert to uppercase if ticker is provided
         stock_info = yf.Ticker(ticker)
         company_name = stock_info.info['longName']
+
+        df = get_values(ticker)  # Call get_values function to fetch data
+        st.write(df)  # Display the retrieved data frame
     
     else:
         st.write("Please enter a valid stock ticker.")
