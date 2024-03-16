@@ -67,16 +67,17 @@ def main():
     ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
 
     if ticker:
-        ticker = ticker.upper()  # Convert to uppercase if ticker is provided
-        stock_info = yf.Ticker(ticker)
-        company_name = stock_info.info['longName']
-
-        df = get_values(ticker)  # Call get_values function to fetch data
-        return df
+        try:
+            ticker = ticker.upper()  # Convert to uppercase if ticker is provided
+            stock_info = yf.Ticker(ticker)
+            company_name = stock_info.info['longName']
     
-    else:
-        st.write("Please enter a valid stock ticker.")
-        
+            df = get_values(ticker)  # Call get_values function to fetch data
+            return df
+    except Exception as e:
+        st.warning("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")
+else:
+    st.warning("Enter a stock ticker to start forecasting.")        
 if __name__ == "__main__":
     main()
     
