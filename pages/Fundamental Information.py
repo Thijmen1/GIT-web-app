@@ -74,7 +74,8 @@ if ticker:
     
         df = get_values(ticker)  # Call get_values function to fetch data
         return df
-     
+    except Exception as e:
+        st.error(f"An error occurred: {e}")     
 if __name__ == "__main__":
     main()
     
