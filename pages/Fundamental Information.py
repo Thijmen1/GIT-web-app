@@ -64,15 +64,15 @@ def get_values(current_ticker):
 def main():
     st.title("Stock Analysis")
     
-ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
+    ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
 
-if ticker:
-    ticker = ticker.upper()  # Convert to uppercase if ticker is provided
-    stock_info = yf.Ticker(ticker)
-    company_name = stock_info.info['longName']
+    if ticker:
+        ticker = ticker.upper()  # Convert to uppercase if ticker is provided
+        stock_info = yf.Ticker(ticker)
+        company_name = stock_info.info['longName']
     
-else:
-    st.write("Please enter a valid stock ticker.")
+    else:
+        st.write("Please enter a valid stock ticker.")
     
     
 if __name__ == "__main__":
