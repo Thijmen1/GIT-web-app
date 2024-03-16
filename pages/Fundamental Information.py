@@ -76,6 +76,8 @@ def main():
     
     else:
         st.write("Please enter a valid stock ticker.")
-    
+        
+if __name__ == "__main__":
+    main()
     
 
