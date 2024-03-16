@@ -78,7 +78,7 @@ def main():
             st.write(df)
             
         except Exception as e:
-            st.error(f"An error occurred: {e}")     
+            st.error(f"Fill in a valid stock ticker e.g. AAPL {e}")     
 if __name__ == "__main__":
     main()
     
