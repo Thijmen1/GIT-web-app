@@ -73,6 +73,8 @@ def main():
             company_name = stock_info.info['longName']
         
             df = get_values(ticker)  # Call get_values function to fetch data
+            df = df.transpose()
+            
             st.write(df)
             
         except Exception as e:
