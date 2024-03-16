@@ -72,11 +72,10 @@ def main():
         company_name = stock_info.info['longName']
 
         df = get_values(ticker)  # Call get_values function to fetch data
-        st.write(df)  # Display the retrieved data frame
+        return df
     
     else:
         st.write("Please enter a valid stock ticker.")
     
     
-if __name__ == "__main__":
-    main()
+
