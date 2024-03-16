@@ -74,8 +74,7 @@ if ticker:
     
         df = get_values(ticker)  # Call get_values function to fetch data
         return df
-else:
-    st.warning("Enter a stock ticker to start forecasting.")        
+     
 if __name__ == "__main__":
     main()
     
