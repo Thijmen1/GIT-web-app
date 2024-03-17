@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
 import yfinance as yf
-import re
+
 
 cases = ["base", "bull", "bear"]
 
@@ -95,93 +95,72 @@ def fetch_opinions(current_ticker):
     html_3 = requests.get(url_3).text
     soup_3 = BeautifulSoup(html_3, 'html.parser')
     
+    # Initialize lists to store the extracted data
+    persons = []
+    companies = []
+    estimates = []
     
-    selector_person_2 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content"
-    person_2 = soup_3.select_one(selector_person_2).get_text()
-
-
+    # Selectors for person, company, and estimate elements
+    person_selectors = [
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content"
+    ]
     
-    selector_person_1 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content"
-    person_1 = soup_3.select_one(selector_person_1).get_text()
-
+    company_selectors = [
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content > div",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content > div",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content > div",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content > div",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content > div"
+    ]
     
-   
-    selector_person_3 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content"
-    person_3 = soup_3.select_one(selector_person_3).get_text()
- 
+    estimate_selectors = [
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
+        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > table > tbody > tr:nth-child(1) > td:nth-child(2)"
+    ]
     
-    
-    selector_person_4 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content"
-    person_4 = soup_3.select_one(selector_person_4).get_text()
-
-    
-    
-    selector_person_5 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content"
-    person_5 = soup_3.select_one(selector_person_5).get_text()
- 
-    
-    
-    #company
-    
-    selector_company_2 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content > div"
-    company_2 = soup_3.select_one(selector_company_2).get_text()
-
-    
-   
-    selector_company_1 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content > div"
-    company_1 = soup_3.select_one(selector_company_1).get_text()
-
-    
-   
-    selector_company_3 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content > div"
-    company_3 = soup_3.select_one(selector_company_3).get_text()
-
-    
-   
-    selector_company_4 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content > div"
-    company_4 = soup_3.select_one(selector_company_4).get_text()
-
-    
-   
-    selector_company_5 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content > div"
-    company_5 = soup_3.select_one(selector_company_5).get_text()
-
-    
-    
-    #estimate
-    
-    selector_estimate_2 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > table > tbody > tr:nth-child(1) > td:nth-child(2)"
-    estimate_2 = soup_3.select_one(selector_estimate_2).get_text()
-    numeric_estimate_2 = float(''.join(c for c in estimate_2 if c.isdigit() or c == '.'))
-    
-   
-    selector_estimate_1 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)"
-    estimate_1 = soup_3.select_one(selector_estimate_1).get_text()
-    numeric_estimate_1 = float(''.join(c for c in estimate_1 if c.isdigit() or c == '.'))
-    
-    
-    selector_estimate_3 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(2)"
-    estimate_3 = soup_3.select_one(selector_estimate_3).get_text()
-    numeric_estimate_3 = float(''.join(c for c in estimate_3 if c.isdigit() or c == '.'))
-    
-    
-    selector_estimate_4 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > table > tbody > tr:nth-child(1) > td:nth-child(2)"
-    estimate_4 = soup_3.select_one(selector_estimate_4).get_text()
-    numeric_estimate_4 = float(''.join(c for c in estimate_4 if c.isdigit() or c == '.'))
-    
-    
-    selector_estimate_5 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > table > tbody > tr:nth-child(1) > td:nth-child(2)"
-    estimate_5 = soup_3.select_one(selector_estimate_5).get_text()
-    numeric_estimate_5 = float(''.join(c for c in estimate_5 if c.isdigit() or c == '.'))
-    
-    frame = {
-        "Person" : [person_1, person_2, person_3, person_4, person_5 ],
-              "Company" : [company_1, company_2,company_3, company_4, company_5], 
-             "Estimate 1-yr" : [numeric_estimate_1, numeric_estimate_2, numeric_estimate_3, numeric_estimate_4, numeric_estimate_5]
+    # Loop through selectors to extract data
+    for person_selector, company_selector, estimate_selector in zip(person_selectors, company_selectors, estimate_selectors):
+        person = soup_3.select_one(person_selector)
+        company = soup_3.select_one(company_selector)
+        estimate = soup_3.select_one(estimate_selector)
         
-        }
-    estimates.append(frame)
+        if person:
+            persons.append(person.get_text().strip())
+        else:
+            persons.append(None)
+        
+        if company:
+            companies.append(company.get_text().strip())
+        else:
+            companies.append(None)
+        
+        if estimate:
+            estimate_text = estimate.get_text().strip()
+            numeric_estimate = float(''.join(c for c in estimate_text if c.isdigit() or c == '.'))
+            estimates.append(numeric_estimate)
+        else:
+            estimates.append(None)
+    
+    # Create a DataFrame from the extracted data
+    df = pd.DataFrame({
+        "Person": persons,
+        "Company": companies,
+        "Estimate 1-yr": estimates
+    })
+    
+    # Append the DataFrame to the list
+    estimates.append(df)
+    
     return estimates
+
+
 
 def main():
     st.title("Stock Analysis")
