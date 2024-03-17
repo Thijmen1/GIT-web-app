@@ -98,54 +98,54 @@ def fetch_opinions(current_ticker):
     
     selector_person_2 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content"
     person_2 = soup_3.select_one(selector_person_2).get_text()
-    numeric_person_2 = re.sub(r'[^a-zA-Z\s]', '', person_2)
+
 
     
     selector_person_1 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content"
     person_1 = soup_3.select_one(selector_person_1).get_text()
-    numeric_person_1 = re.sub(r'[^a-zA-Z\s]', '', person_1)
+
     
    
     selector_person_3 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content"
     person_3 = soup_3.select_one(selector_person_3).get_text()
-    numeric_person_3 = re.sub(r'[^a-zA-Z\s]', '', person_3)
+ 
     
     
     selector_person_4 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content"
     person_4 = soup_3.select_one(selector_person_4).get_text()
-    numeric_person_4 = re.sub(r'[^a-zA-Z\s]', '', person_4)
+
     
     
     selector_person_5 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content"
     person_5 = soup_3.select_one(selector_person_5).get_text()
-    numeric_person_5 = re.sub(r'[^a-zA-Z\s]', '', person_5)
+ 
     
     
     #company
     
     selector_company_2 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content > div"
     company_2 = soup_3.select_one(selector_company_2).get_text()
-    numeric_company_2 = re.sub(r'[^a-zA-Z\s]', '', company_2)
+
     
    
     selector_company_1 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content > div"
     company_1 = soup_3.select_one(selector_company_1).get_text()
-    numeric_company_1 = re.sub(r'[^a-zA-Z\s]', '', company_1)
+
     
    
     selector_company_3 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content > div"
     company_3 = soup_3.select_one(selector_company_3).get_text()
-    numeric_company_3 = re.sub(r'[^a-zA-Z\s]', '', company_3)
+
     
    
     selector_company_4 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content > div"
     company_4 = soup_3.select_one(selector_company_4).get_text()
-    numeric_company_4 = re.sub(r'[^a-zA-Z\s]', '', company_4)
+
     
    
     selector_company_5 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content > div"
     company_5 = soup_3.select_one(selector_company_5).get_text()
-    numeric_company_5 = re.sub(r'[^a-zA-Z\s]', '', company_5)
+
     
     
     #estimate
@@ -175,14 +175,15 @@ def fetch_opinions(current_ticker):
     numeric_estimate_5 = float(''.join(c for c in estimate_5 if c.isdigit() or c == '.'))
     
     frame = {
-        #"Person" : [numeric_person_1, numeric_person_2, numeric_person_3, numeric_person_4, numeric_person_5 ],
-           #  "Company" : [numeric_company_1, numeric_company_2, numeric_company_3, numeric_company_4, numeric_company_5], 
+        "Person" : [person_1, person_2, person_3, person_4, person_5 ],
+              "Company" : [company_1, company_2,company_3, company_4, company_5], 
              "Estimate 1-yr" : [numeric_estimate_1, numeric_estimate_2, numeric_estimate_3, numeric_estimate_4, numeric_estimate_5]
         
         }
     estimates.append(frame)
     return estimates
 
+fetch_opinions("AAPL")
 
 def main():
     st.title("Stock Analysis")
