@@ -66,7 +66,7 @@ def get_values(current_ticker):
     estimate_high = soup_3.select_one(selector_estimate_high).get_text()
     numeric_estimate_high = float(''.join(c for c in estimate_high if c.isdigit() or c == '.'))
     
-    current_data["Wall street lowest estimate 1-yr"] = numeric_estimate_high
+    current_data["Wall street highest estimate 1-yr"] = numeric_estimate_high
     
     # Append the dictionary to the list
     values.append(current_data)
