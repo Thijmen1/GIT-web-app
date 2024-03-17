@@ -180,8 +180,8 @@ def fetch_opinions(current_ticker):
              "Estimate 1-yr" : [numeric_estimate_1, numeric_estimate_2, numeric_estimate_3, numeric_estimate_4, numeric_estimate_5]
         
         }
-    estimates.append(frame)
-    return estimates
+    
+    return frame
 
 
 
