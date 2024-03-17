@@ -11,13 +11,11 @@ import pandas as pd
 import streamlit as st
 import yfinance as yf
 
-
 cases = ["base", "bull", "bear"]
 
 
 # Create an empty list to store the data
 values = []
-estimates = []
 
 def get_values(current_ticker):
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
@@ -89,76 +87,7 @@ def get_values(current_ticker):
     
     return pd.DataFrame(values)
         
-def fetch_opinions(current_ticker): 
-    url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
-    
-    html_3 = requests.get(url_3).text
-    soup_3 = BeautifulSoup(html_3, 'html.parser')
-    
-    # Initialize lists to store the extracted data
-    persons = []
-    companies = []
-    estimates = []
-    
-    # Selectors for person, company, and estimate elements
-    person_selectors = [
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content"
-    ]
-    
-    company_selectors = [
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content > div",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content > div",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content > div",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content > div",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content > div"
-    ]
-    
-    estimate_selectors = [
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > table > tbody > tr:nth-child(1) > td:nth-child(2)",
-        "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > table > tbody > tr:nth-child(1) > td:nth-child(2)"
-    ]
-    
-    # Loop through selectors to extract data
-    for person_selector, company_selector, estimate_selector in zip(person_selectors, company_selectors, estimate_selectors):
-        person = soup_3.select_one(person_selector)
-        company = soup_3.select_one(company_selector)
-        estimate = soup_3.select_one(estimate_selector)
-        
-        if person:
-            persons.append(person.get_text().strip())
-        else:
-            persons.append(None)
-        
-        if company:
-            companies.append(company.get_text().strip())
-        else:
-            companies.append(None)
-        
-        if estimate:
-            estimate_text = estimate.get_text().strip()
-            numeric_estimate = float(''.join(c for c in estimate_text if c.isdigit() or c == '.'))
-            estimates.append(numeric_estimate)
-        else:
-            estimates.append(None)
-    
-    # Create a DataFrame from the extracted data
-    df = pd.DataFrame({
-        "Person": persons,
-        "Company": companies,
-        "Estimate 1-yr": estimates
-    })
-    
-    # Append the DataFrame to the list
-    estimates.append(df)
-    
-    return estimates
+
 
 
 
@@ -177,10 +106,6 @@ def main():
             df = df.transpose()
             st.header(company_name)
             st.write(df)
-            
-            st.subheader("Expert opinions")
-            df_2 = fetch_opinions(ticker)
-            st.write(df_2)
             
         except Exception as e:
             st.error(f"Fill in a valid stock ticker e.g. AAPL {e}")     
