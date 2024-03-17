@@ -89,7 +89,7 @@ def get_values(current_ticker):
     
     return pd.DataFrame(values)
         
-def fetch_opnions(current_ticker): 
+def fetch_opinions(current_ticker): 
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
     
     html_3 = requests.get(url_3).text
