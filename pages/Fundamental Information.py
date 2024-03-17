@@ -88,7 +88,7 @@ def get_values(current_ticker):
     return pd.DataFrame(values)
         
 
-get_values("AAPL")
+
 
 
 def main():
