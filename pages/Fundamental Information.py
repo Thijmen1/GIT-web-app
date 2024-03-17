@@ -96,28 +96,28 @@ def fetch_opinions(current_ticker):
     soup_3 = BeautifulSoup(html_3, 'html.parser')
     
     
-    selector_person_2 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content"
-    person_2 = soup_3.select_one(selector_person_2).get_text()
+    # selector_person_2 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(2) > div.ui.header > div.content"
+    # person_2 = soup_3.select_one(selector_person_2).get_text()
 
 
     
-    selector_person_1 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content"
-    person_1 = soup_3.select_one(selector_person_1).get_text()
+    # selector_person_1 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(1) > div.ui.header > div.content"
+    # person_1 = soup_3.select_one(selector_person_1).get_text()
 
     
    
-    selector_person_3 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content"
-    person_3 = soup_3.select_one(selector_person_3).get_text()
+    # selector_person_3 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(3) > div.ui.header > div.content"
+    # person_3 = soup_3.select_one(selector_person_3).get_text()
  
     
     
-    selector_person_4 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content"
-    person_4 = soup_3.select_one(selector_person_4).get_text()
+    # selector_person_4 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(4) > div.ui.header > div.content"
+    # person_4 = soup_3.select_one(selector_person_4).get_text()
 
     
     
-    selector_person_5 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content"
-    person_5 = soup_3.select_one(selector_person_5).get_text()
+    # selector_person_5 = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div:nth-child(5) > div.ui.header > div.content"
+    # person_5 = soup_3.select_one(selector_person_5).get_text()
  
     
     
@@ -175,7 +175,7 @@ def fetch_opinions(current_ticker):
     numeric_estimate_5 = float(''.join(c for c in estimate_5 if c.isdigit() or c == '.'))
     
     frame = {
-        "Person" : [person_1, person_2, person_3, person_4, person_5 ],
+        # "Person" : [person_1, person_2, person_3, person_4, person_5 ],
               "Company" : [company_1, company_2,company_3, company_4, company_5], 
              "Estimate 1-yr" : [numeric_estimate_1, numeric_estimate_2, numeric_estimate_3, numeric_estimate_4, numeric_estimate_5]
         
