@@ -183,8 +183,6 @@ def fetch_opinions(current_ticker):
     estimates.append(frame)
     return estimates
 
-fetch_opinions("AAPL")
-
 def main():
     st.title("Stock Analysis")
     
