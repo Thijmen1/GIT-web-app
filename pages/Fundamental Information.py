@@ -174,8 +174,9 @@ def fetch_opinions(current_ticker):
     estimate_5 = soup_3.select_one(selector_estimate_5).get_text()
     numeric_estimate_5 = float(''.join(c for c in estimate_5 if c.isdigit() or c == '.'))
     
-    frame = {"Person" : [numeric_person_1, numeric_person_2, numeric_person_3, numeric_person_4, numeric_person_5 ],
-             "Company" : [numeric_company_1, numeric_company_2, numeric_company_3, numeric_company_4, numeric_company_5], 
+    frame = {
+        #"Person" : [numeric_person_1, numeric_person_2, numeric_person_3, numeric_person_4, numeric_person_5 ],
+           #  "Company" : [numeric_company_1, numeric_company_2, numeric_company_3, numeric_company_4, numeric_company_5], 
              "Estimate 1-yr" : [numeric_estimate_1, numeric_estimate_2, numeric_estimate_3, numeric_estimate_4, numeric_estimate_5]
         
         }
