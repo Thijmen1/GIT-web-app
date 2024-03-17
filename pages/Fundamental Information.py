@@ -200,7 +200,7 @@ def main():
             st.header(company_name)
             st.write(df)
             
-            st.subheader("Expert opninions")
+            st.subheader("Expert opinions")
             df_2 = fetch_opinions(ticker)
             st.write(df_2)
             
