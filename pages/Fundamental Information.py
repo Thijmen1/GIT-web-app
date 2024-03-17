@@ -13,6 +13,7 @@ import yfinance as yf
 
 cases = ["base", "bull", "bear"]
 
+
 # Create an empty list to store the data
 values = []
 
@@ -39,7 +40,34 @@ def get_values(current_ticker):
     current_data["Current_Price"] = numeric_current_price
     current_data["Intrinsic_Value_base"] = numeric_int_value
     current_data["Signal_intrinsic"] = "Undervalued" if numeric_int_value > numeric_current_price else "Overvalued"
-
+    
+    #wll estimates
+    url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
+    
+    html_3 = requests.get(url_3).text
+    soup_3 = BeautifulSoup(html_3, 'html.parser')
+    
+    #lowest estimate
+    selector_estimate_low = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(1) > div.right-aligned > div.ui.header"
+    estimate_low = soup_3.select_one(selector_estimate_low).get_text()
+    numeric_estimate_low = float(''.join(c for c in estimate_low if c.isdigit() or c == '.'))
+    
+    current_data["Wall street lowest estimate 1-yr"] = numeric_estimate_low
+    
+    #avg estimate
+    selector_estimate_avg = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(3) > div.right-aligned > div.ui.header"
+    estimate_avg = soup_3.select_one(selector_estimate_avg).get_text()
+    numeric_estimate_avg = float(''.join(c for c in estimate_avg if c.isdigit() or c == '.'))
+    
+    current_data["Wall street average estimate 1-yr"] = numeric_estimate_avg
+    
+    #highest estimate
+    selector_estimate_high = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(5) > div.right-aligned > div.ui.header"
+    estimate_high = soup_3.select_one(selector_estimate_high).get_text()
+    numeric_estimate_high = float(''.join(c for c in estimate_high if c.isdigit() or c == '.'))
+    
+    current_data["Wall street lowest estimate 1-yr"] = numeric_estimate_high
+    
     # Append the dictionary to the list
     values.append(current_data)
 
@@ -53,12 +81,14 @@ def get_values(current_ticker):
         dcf_value = soup_2.select_one(selector_dcf).get_text()
         numeric_dcf_value = float(''.join(c for c in dcf_value if c.isdigit() or c == '.'))
 
-        current_data[f"DCF_value_{case}"] = numeric_dcf_value
-        current_data[f"Signal_DCF_{case}"] = "Undervalued" if numeric_dcf_value > numeric_current_price else "Overvalued"
+        current_data[f"DCF_value_{case}_AS"] = numeric_dcf_value
+        current_data[f"Signal_DCF_{case}_AS"] = "Undervalued" if numeric_dcf_value > numeric_current_price else "Overvalued"
+        
+    
     return pd.DataFrame(values)
         
 
-
+get_values("AAPL")
 
 
 def main():
@@ -82,4 +112,3 @@ def main():
 if __name__ == "__main__":
     main()
     
-
