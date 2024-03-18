@@ -121,12 +121,23 @@ def main():
                 df = get_values(ticker, alpha)  # Call get_values function to fetch data
                 df.columns = pd.MultiIndex.from_product([[company_name], df.columns])  # Add company name as column level
                 dfs.append(df)  # Append dataframe without transposing
+
+                st.subheader(f"Expert opinions on {company name}")
+                st.write(f"st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")")
                 
             # Concatenate dataframes along columns (axis=1)
             df_concat = pd.concat(dfs, axis=1)
             
             st.header("Combined Data for Multiple Stocks")
             st.write(df_concat)
+
+            st.header("Temoporarily we will use links")
+            for ticker in tickers_list: 
+                ticker = ticker.strip()  # Remove leading/trailing whitespace
+                stock_info = yf.Ticker(ticker)
+                company_name = stock_info.info['longName']
+                st.subheader(f"Expert opinions on {company name}")
+                st.write(f"st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")
             
         except Exception as e:
             st.error(f"Fill in valid stock tickers (e.g., AAPL, MSFT) separated by commas. {e}")     
