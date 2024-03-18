@@ -31,11 +31,11 @@ def get_values(current_ticker, alpha):
     current_data["Current_Price"] = numeric_current_price
     current_data["Intrinsic_Value_base"] = numeric_int_value
     if numeric_int_value < numeric_current_price - alpha * numeric_current_price:
-        current_data["Signal_intrinsic"] = "Undervalued"
+        current_data["Signal_intrinsic"] = "Overvalued"
     elif numeric_int_value < numeric_current_price + alpha * numeric_current_price:
         current_data["Signal_intrinsic"] = "Properly Valued"
     else:
-        current_data["Signal_intrinsic"] = "Overvalued"
+        current_data["Signal_intrinsic"] = "Undervalued"
     
     # Wall street estimates
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
@@ -64,10 +64,6 @@ def get_values(current_ticker, alpha):
     
     current_data["Wall street highest estimate 1-yr"] = numeric_estimate_high
     
-    # P/E ratio
-    pe_ratio = get_pe_ratio(current_ticker, api_key)
-    current_data["P/E Ratio"] = pe_ratio
-    
     # Append the dictionary to the list
     values.append(current_data)
 
@@ -83,11 +79,11 @@ def get_values(current_ticker, alpha):
 
         current_data[f"DCF_value_{case}_AS"] = numeric_dcf_value
         if numeric_dcf_value < numeric_current_price - alpha * numeric_current_price: 
-            current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
+            current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
         elif numeric_dcf_value < numeric_current_price + alpha * numeric_current_price:
             current_data[f"Signal_DCF_{case}_AS"] = "Properly Valued"
         else: 
-            current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
+            current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
                 
     return pd.DataFrame(values).set_index("Ticker").transpose()
 
@@ -123,6 +119,8 @@ def main():
                 stock_info = yf.Ticker(ticker)
                 company_name = stock_info.info['longName']
                 df = get_values(ticker, alpha)  # Call get_values function to fetch data
+                pe_ratio = get_pe_ratio(ticker, api_key)  # Get PE ratio
+                df["PE_Ratio"] = pe_ratio  # Add PE ratio to the DataFrame
                 df.columns = pd.MultiIndex.from_product([[company_name], df.columns])  # Add company name as column level
                 dfs.append(df)  # Append dataframe without transposing
                 
@@ -137,6 +135,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
     
