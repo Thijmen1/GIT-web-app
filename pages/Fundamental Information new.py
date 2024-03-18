@@ -8,6 +8,7 @@ cases = ["base", "bull", "bear"]
 api_key = 'YOUR_API_KEY'
 
 def get_values(current_ticker, alpha):
+    values = []  # Initialize values list here
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
     current_data = {"Ticker": current_ticker}
 
@@ -77,15 +78,15 @@ def get_values(current_ticker, alpha):
         numeric_dcf_value = float(''.join(c for c in dcf_value if c.isdigit() or c == '.'))
 
         current_data[f"DCF_value_{case}_AS"] = numeric_dcf_value
-        if numeric_dcf_value < numeric_current_price - alpha * numeric_current_price: # not working properly
+        if numeric_dcf_value < numeric_current_price - alpha * numeric_current_price: 
             current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
         elif numeric_dcf_value < numeric_current_price + alpha * numeric_current_price:
             current_data[f"Signal_DCF_{case}_AS"] = "Properly Valued"
-        else:
+        else: 
             current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
                 
     return pd.DataFrame(values)
-
+        
 def get_pe_ratio(symbol, api_key):
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
     response = requests.get(url)
@@ -106,9 +107,8 @@ def get_values_comp(ticker):
 def main():
     st.title("Stock Analysis")
     
-    tickers = st.text_input('Enter stock tickers (separated by commas)').upper()  # Update with more tickers if needed
+    tickers = st.text_input('Enter stock tickers separated by commas (e.g., AAPL, MSFT)').upper()  
     alpha = st.radio("Error margin (alpha) " , (0.01, 0.02, 0.05 ))
-    
     if tickers:
         try:
             tickers_list = tickers.split(",")  # Convert input to list of tickers
