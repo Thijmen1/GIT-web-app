@@ -33,7 +33,6 @@ def get_values(current_ticker, api_key):
     
     # Fetch P/E ratio using Alpha Vantage
     alpha_vantage_pe_ratio = get_pe_ratio(current_ticker, api_key)
-    print("Alpha Vantage PE Ratio Response:", alpha_vantage_pe_ratio)  # Debugging statement
     current_data["P/E Ratio"] = alpha_vantage_pe_ratio
 
     # Append the dictionary to the list
@@ -68,21 +67,18 @@ def fetch_opinions(current_ticker):
     soup_3 = BeautifulSoup(html_3, 'html.parser')
 
     # Extract expert opinions
-    expert_container = soup_3.select_one(".analyst-estimates-desktop")
-    if not expert_container:
-        return pd.DataFrame(columns=["Company", "Estimate 1-yr"])
-
-    experts = expert_container.select("tr")
+    experts = soup_3.select(".desktop-only")
     companies = []
     estimates = []
 
-    for expert in experts[1:]:  # Skip the header row
-        company = expert.select_one(".ui.header").text.strip()
-        estimate = expert.select_one("td:nth-child(2)").text.strip()
+    for expert in experts:
+        company = expert.select_one(".ui.header").text
+        estimate = float(expert.select_one("td:nth-child(2)").text)
         companies.append(company)
         estimates.append(estimate)
 
     return pd.DataFrame({"Company": companies, "Estimate 1-yr": estimates})
+
 
 def main():
     st.title("Stock Analysis")
@@ -110,5 +106,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
