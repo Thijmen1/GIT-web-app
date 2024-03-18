@@ -122,8 +122,8 @@ def main():
                 df.columns = pd.MultiIndex.from_product([[company_name], df.columns])  # Add company name as column level
                 dfs.append(df)  # Append dataframe without transposing
 
-                st.subheader(f"Expert opinions on {company_name}")
-                st.write(f"st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")")
+                #st.subheader(f"Expert opinions on {company_name}")
+                #st.write(f"st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")")
                 
             # Concatenate dataframes along columns (axis=1)
             df_concat = pd.concat(dfs, axis=1)
