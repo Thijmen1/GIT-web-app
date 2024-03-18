@@ -119,8 +119,6 @@ def main():
                 stock_info = yf.Ticker(ticker)
                 company_name = stock_info.info['longName']
                 df = get_values(ticker, alpha)  # Call get_values function to fetch data
-                pe_ratio = get_pe_ratio(ticker, api_key)  # Get PE ratio
-                df["PE_Ratio"] = pe_ratio  # Add PE ratio to the DataFrame
                 df.columns = pd.MultiIndex.from_product([[company_name], df.columns])  # Add company name as column level
                 dfs.append(df)  # Append dataframe without transposing
                 
@@ -135,7 +133,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
     
