@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 18 11:12:02 2024
-
-@author: cjtev
-"""
-
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -40,8 +33,7 @@ def get_values(current_ticker, api_key):
     
     # Fetch P/E ratio using Alpha Vantage
     alpha_vantage_pe_ratio = get_pe_ratio(current_ticker, api_key)
-    print("Alpha Vantage PE Ratio Response:", alpha_vantage_pe_ratio)  # Debugging statement
-    current_data["P/E Ratio"] = alpha_vantage_pe_ratio
+    current_data["P/E Ratio (Alpha Vantage)"] = alpha_vantage_pe_ratio
 
     # Append the dictionary to the list
     values.append(current_data)
@@ -65,11 +57,8 @@ def get_pe_ratio(symbol, api_key):
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
     response = requests.get(url)
     data = response.json()
-    print("Alpha Vantage API Response:", data)  # Debugging statement
     pe_ratio = data.get("PERatio")
-    print("PE Ratio:", pe_ratio)  # Debugging statement
     return pe_ratio
-
 
 def fetch_opinions(current_ticker): 
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
