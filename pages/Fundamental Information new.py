@@ -4,8 +4,31 @@ import pandas as pd
 import streamlit as st
 import yfinance as yf
 
-cases = ["base", "bull", "bear"]
-values = []
+def get_pe_ratio(symbol, api_key):
+    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
+    response = requests.get(url)
+    data = response.json()
+    pe_ratio = data.get("PERatio")
+    return pe_ratio
+
+def fetch_opinions(current_ticker): 
+    url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
+    
+    html_3 = requests.get(url_3).text
+    soup_3 = BeautifulSoup(html_3, 'html.parser')
+
+    # Extract expert opinions
+    experts = soup_3.select(".desktop-only")
+    companies = []
+    estimates = []
+
+    for expert in experts:
+        company = expert.select_one(".ui.header").text
+        estimate = float(expert.select_one("td:nth-child(2)").text)
+        companies.append(company)
+        estimates.append(estimate)
+
+    return pd.DataFrame({"Company": companies, "Estimate 1-yr": estimates})
 
 def get_values(current_ticker, api_key):
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
@@ -52,33 +75,6 @@ def get_values(current_ticker, api_key):
         current_data[f"Signal_DCF_{case}_AS"] = "Undervalued" if numeric_dcf_value > numeric_current_price else "Overvalued"
     
     return pd.DataFrame(values)
-
-def get_pe_ratio(symbol, api_key):
-    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    pe_ratio = data.get("PERatio")
-    return pe_ratio
-
-def fetch_opinions(current_ticker): 
-    url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
-    
-    html_3 = requests.get(url_3).text
-    soup_3 = BeautifulSoup(html_3, 'html.parser')
-
-    # Extract expert opinions
-    experts = soup_3.select(".desktop-only")
-    companies = []
-    estimates = []
-
-    for expert in experts:
-        company = expert.select_one(".ui.header").text
-        estimate = float(expert.select_one("td:nth-child(2)").text)
-        companies.append(company)
-        estimates.append(estimate)
-
-    return pd.DataFrame({"Company": companies, "Estimate 1-yr": estimates})
-
 
 def main():
     st.title("Stock Analysis")
