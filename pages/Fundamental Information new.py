@@ -1,23 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Mar  3 14:50:40 2024
-
-@author: cjtev
-"""
-
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
 import yfinance as yf
 
-
 cases = ["base", "bull", "bear"]
 api_key = 'YOUR_API_KEY'
-
-# Create an empty list to store the data
-values = []
-estimates = []
 
 def get_values(current_ticker, alpha):
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
@@ -48,27 +36,27 @@ def get_values(current_ticker, alpha):
     else:
         current_data["Signal_intrinsic"] = "Overvalued"
     
-    #wll estimates
+    # Wall street estimates
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
     
     html_3 = requests.get(url_3).text
     soup_3 = BeautifulSoup(html_3, 'html.parser')
     
-    #lowest estimate
+    # Lowest estimate
     selector_estimate_low = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(1) > div.right-aligned > div.ui.header"
     estimate_low = soup_3.select_one(selector_estimate_low).get_text()
     numeric_estimate_low = float(''.join(c for c in estimate_low if c.isdigit() or c == '.'))
     
     current_data["Wall street lowest estimate 1-yr"] = numeric_estimate_low
     
-    #avg estimate
+    # Avg estimate
     selector_estimate_avg = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(3) > div.right-aligned > div.ui.header"
     estimate_avg = soup_3.select_one(selector_estimate_avg).get_text()
     numeric_estimate_avg = float(''.join(c for c in estimate_avg if c.isdigit() or c == '.'))
     
     current_data["Wall street average estimate 1-yr"] = numeric_estimate_avg
     
-    #highest estimate
+    # Highest estimate
     selector_estimate_high = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(5) > div.right-aligned > div.ui.header"
     estimate_high = soup_3.select_one(selector_estimate_high).get_text()
     numeric_estimate_high = float(''.join(c for c in estimate_high if c.isdigit() or c == '.'))
@@ -93,10 +81,11 @@ def get_values(current_ticker, alpha):
             current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
         elif numeric_dcf_value < numeric_current_price + alpha * numeric_current_price:
             current_data[f"Signal_DCF_{case}_AS"] = "Properly Valued"
-        else: current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
+        else:
+            current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
                 
     return pd.DataFrame(values)
-        
+
 def get_pe_ratio(symbol, api_key):
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
     response = requests.get(url)
@@ -114,41 +103,37 @@ def get_values_comp(ticker):
     df = pd.DataFrame(ls, index=index)
     return df.T
 
-
-
-
 def main():
     st.title("Stock Analysis")
     
-    ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
+    tickers = st.text_input('Enter stock tickers (separated by commas)').upper()  # Update with more tickers if needed
     alpha = st.radio("Error margin (alpha) " , (0.01, 0.02, 0.05 ))
-    if ticker:
+    
+    if tickers:
         try:
-            ticker = ticker.upper()  # Convert to uppercase if ticker is provided
-            stock_info = yf.Ticker(ticker)
-            company_name = stock_info.info['longName']
-        
-            df = get_values(ticker, alpha)  # Call get_values function to fetch data
-            df = df.transpose()
-            st.header(company_name)
-            st.write(df)
+            tickers_list = tickers.split(",")  # Convert input to list of tickers
+            dfs = []
             
-            st.subheader("Expert opinions")
-            st.write("Temporary filling, the link to the expert opinions: ")           
-            st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")
+            for ticker in tickers_list:
+                ticker = ticker.strip()  # Remove leading/trailing whitespace
+                stock_info = yf.Ticker(ticker)
+                company_name = stock_info.info['longName']
+                df = get_values(ticker, alpha)  # Call get_values function to fetch data
+                dfs.append(df.transpose())
+                
+                st.header(company_name)
+                st.write(df)
             
-            st.header("Performance metrics")
-            st.subheader("PE-ratio (BUg occuring with retrieval)")
-            pe_ratio = get_pe_ratio(ticker, api_key)
-            st.write(pe_ratio)
+            # Concatenate dataframes horizontally
+            df_concat = pd.concat(dfs, axis=1)
             
-            st.subheader("FCF and enterprise values")
-            df_2 = get_values_comp(ticker)
-            st.write(df_2)
-            
+            st.header("Combined Data for Multiple Stocks")
+            st.write(df_concat)
             
         except Exception as e:
-            st.error(f"Fill in a valid stock ticker e.g. AAPL {e}")     
+            st.error(f"Fill in valid stock tickers (e.g., AAPL, MSFT) separated by commas. {e}")     
+
 if __name__ == "__main__":
     main()
+
     
