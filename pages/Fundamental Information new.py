@@ -42,11 +42,11 @@ def get_values(current_ticker, alpha):
     current_data["Current_Price"] = numeric_current_price
     current_data["Intrinsic_Value_base"] = numeric_int_value
     if numeric_int_value < numeric_current_price - alpha * numeric_current_price:
-        current_data["Signal_intrinsic"] = "Undervalued"
+        current_data["Signal_intrinsic"] = "Overvalued"
     elif numeric_int_value < numeric_current_price + alpha * numeric_current_price:
         current_data["Signal_intrinsic"] = "Properly Valued"
     else:
-        current_data["Signal_intrinsic"] = "Overvalued"
+        current_data["Signal_intrinsic"] = "Undervalued"
     
     #wll estimates
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
