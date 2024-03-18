@@ -55,9 +55,31 @@ def get_values(current_ticker):
 
         current_data[f"DCF_value_{case}_AS"] = numeric_dcf_value
         current_data[f"Signal_DCF_{case}_AS"] = "Undervalued" if numeric_dcf_value > numeric_current_price else "Overvalued"
-        
     
+    # Fetch P/E ratio using Alpha Vantage
+    api_key = 'YOUR_API_KEY'  # Replace with your Alpha Vantage API key
+    pe_ratio = get_pe_ratio(current_ticker, api_key)
+    current_data["PE_Ratio"] = pe_ratio
+
+    # Fetch free cash flow and enterprise value using yfinance
+    try:
+        ticker = yf.Ticker(current_ticker)
+        info = ticker.info
+        free_cash_flow = info.get("freeCashflow")
+        enterprise_value = info.get("enterpriseValue")
+        current_data["Free_Cash_Flow"] = free_cash_flow
+        current_data["Enterprise_Value"] = enterprise_value
+    except Exception as e:
+        print(f"Failed to retrieve data for {current_ticker}: {e}")
+
     return pd.DataFrame(values)
+
+def get_pe_ratio(symbol, api_key):
+    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
+    response = requests.get(url)
+    data = response.json()
+    pe_ratio = data.get("PERatio")
+    return pe_ratio
 
 def fetch_opinions(current_ticker): 
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
