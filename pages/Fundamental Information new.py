@@ -86,7 +86,7 @@ def get_values(current_ticker, alpha):
             current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
                 
     return pd.DataFrame(values)
-        
+
 def get_pe_ratio(symbol, api_key):
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
     response = requests.get(url)
@@ -119,13 +119,14 @@ def main():
                 stock_info = yf.Ticker(ticker)
                 company_name = stock_info.info['longName']
                 df = get_values(ticker, alpha)  # Call get_values function to fetch data
-                dfs.append(df.transpose())
+                dfs.append(df)  # Append dataframe without transposing
                 
                 st.header(company_name)
                 st.write(df)
             
-            # Concatenate dataframes horizontally
-            df_concat = pd.concat(dfs, axis=1)
+            # Concatenate dataframes along rows (axis=0)
+            df_concat = pd.concat(dfs, axis=0)
+            df_concat.reset_index(inplace=True)  # Reset index to ensure unique index values
             
             st.header("Combined Data for Multiple Stocks")
             st.write(df_concat)
