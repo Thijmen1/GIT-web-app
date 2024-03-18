@@ -93,8 +93,7 @@ def get_values(current_ticker, alpha):
             current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
         elif numeric_dcf_value < numeric_current_price + alpha * numeric_current_price:
             current_data[f"Signal_DCF_{case}_AS"] = "Properly Valued"
-        else:
-                current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
+        else: current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
                 
         return pd.DataFrame(values)
         
