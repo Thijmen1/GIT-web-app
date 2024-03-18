@@ -82,13 +82,12 @@ def fetch_opinions(current_ticker):
     for expert in experts:
         company = expert.select_one(".ui.header").text.strip()
         estimate = expert.select_one("td:nth-child(2)").text.strip()
-        print("Company:", company)  # Debugging statement
-        print("Estimate 1-yr:", estimate)  # Debugging statement
+        st.write("Company:", company)  # Debugging statement
+        st.write("Estimate 1-yr:", estimate)  # Debugging statement
         companies.append(company)
         estimates.append(estimate)
 
     return pd.DataFrame({"Company": companies, "Estimate 1-yr": estimates})
-
 
 
 def main():
@@ -117,6 +116,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
