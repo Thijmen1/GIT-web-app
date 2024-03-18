@@ -136,9 +136,9 @@ def main():
                 ticker = ticker.strip()  # Remove leading/trailing whitespace
                 stock_info = yf.Ticker(ticker)
                 company_name = stock_info.info['longName']
-                st.subheader(f"Expert opinions on {company name}")
-                st.write(f"st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")
-            
+                st.subheader(f"Expert opinions on {company_name}")
+                st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")
+
         except Exception as e:
             st.error(f"Fill in valid stock tickers (e.g., AAPL, MSFT) separated by commas. {e}")     
 
