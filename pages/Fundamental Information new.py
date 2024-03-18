@@ -19,7 +19,7 @@ api_key = 'YOUR_API_KEY'
 values = []
 estimates = []
 
-def get_values(current_ticker):
+def get_values(current_ticker, alpha):
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
     current_data = {"Ticker": current_ticker}
 
@@ -41,7 +41,12 @@ def get_values(current_ticker):
     # Store the base case values
     current_data["Current_Price"] = numeric_current_price
     current_data["Intrinsic_Value_base"] = numeric_int_value
-    current_data["Signal_intrinsic"] = "Undervalued" if numeric_int_value > numeric_current_price else "Overvalued"
+    if numeric_int_value < numeric_current_price - alpha * numeric_current_price:
+        current_data["Signal_intrinsic"] = "Undervalued"
+    elif numeric_int_value < numeric_current_price + alpha * numeric_current_price:
+        current_data["Signal_intrinsic"] = "Properly Valued"
+    else:
+        current_data["Signal_intrinsic"] = "Overvalued"
     
     #wll estimates
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
@@ -84,10 +89,14 @@ def get_values(current_ticker):
         numeric_dcf_value = float(''.join(c for c in dcf_value if c.isdigit() or c == '.'))
 
         current_data[f"DCF_value_{case}_AS"] = numeric_dcf_value
-        current_data[f"Signal_DCF_{case}_AS"] = "Undervalued" if numeric_dcf_value > numeric_current_price else "Overvalued"
-        
-    
-    return pd.DataFrame(values)
+        if numeric_dcf_value < numeric_current_price - alpha * numeric_current_price:
+            current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
+        elif numeric_dcf_value < numeric_current_price + alpha * numeric_current_price:
+            current_data[f"Signal_DCF_{case}_AS"] = "Properly Valued"
+        else:
+                current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
+                
+        return pd.DataFrame(values)
         
 def get_pe_ratio(symbol, api_key):
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
@@ -104,7 +113,7 @@ def get_values_comp(ticker):
     ls = {"FCF": free_cash_flow, "EV": enterprise_value}
     index = [ticker]  # Assuming you want the ticker as the index
     df = pd.DataFrame(ls, index=index)
-    return df
+    return df.T
 
 
 
@@ -113,14 +122,14 @@ def main():
     st.title("Stock Analysis")
     
     ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
-    
+    alpha = st.radio(0.01, 0.02, 0.05 )
     if ticker:
         try:
             ticker = ticker.upper()  # Convert to uppercase if ticker is provided
             stock_info = yf.Ticker(ticker)
             company_name = stock_info.info['longName']
         
-            df = get_values(ticker)  # Call get_values function to fetch data
+            df = get_values(ticker, alpha)  # Call get_values function to fetch data
             df = df.transpose()
             st.header(company_name)
             st.write(df)
