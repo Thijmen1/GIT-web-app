@@ -12,61 +12,43 @@ def get_values(current_ticker, alpha):
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
     current_data = {"Ticker": current_ticker}
 
-    # Read the HTML content from the summary webpage
-    html_1 = requests.get(url_1).text
-    soup_1 = BeautifulSoup(html_1, 'html.parser')
+    try:
+        # Read the HTML content from the summary webpage
+        html_1 = requests.get(url_1).text
+        soup_1 = BeautifulSoup(html_1, 'html.parser')
 
-    selector_int_price = "#main > div:nth-child(4) > div:nth-child(1) > div > div:nth-child(3) > div > div > div.six.wide.computer.sixteen.wide.tablet.center.aligned.flex-column.mobile-no-horizontal-padding.column.appear.only-opacity > div:nth-child(1) > div > div:nth-child(1) > div.ui.intrinsic-value-color.no-margin.valuation-scenario-value.header.restriction-sensitive-data"
-    selector_current = "#main > div:nth-child(4) > div:nth-child(1) > div > div:nth-child(3) > div > div > div.ten.wide.computer.sixteen.wide.tablet.flex-column.mobile-no-horizontal-padding.column > div:nth-child(1) > div > div:nth-child(2) > p > span:nth-child(5)"
-    
-    # Get the current price
-    current_price = soup_1.select_one(selector_current).get_text()
-    numeric_current_price = float(''.join(c for c in current_price if c.isdigit() or c == '.'))
+        selector_int_price = "#main > div:nth-child(4) > div:nth-child(1) > div > div:nth-child(3) > div > div > div.six.wide.computer.sixteen.wide.tablet.center.aligned.flex-column.mobile-no-horizontal-padding.column.appear.only-opacity > div:nth-child(1) > div > div:nth-child(1) > div.ui.intrinsic-value-color.no-margin.valuation-scenario-value.header.restriction-sensitive-data"
+        selector_current = "#main > div:nth-child(4) > div:nth-child(1) > div > div:nth-child(3) > div > div > div.ten.wide.computer.sixteen.wide.tablet.flex-column.mobile-no-horizontal-padding.column > div:nth-child(1) > div > div:nth-child(2) > p > span:nth-child(5)"
+        
+        # Get the current price
+        current_price = soup_1.select_one(selector_current).get_text()
+        numeric_current_price = float(''.join(c for c in current_price if c.isdigit() or c == '.'))
 
-    # Get the intrinsic value
-    int_value = soup_1.select_one(selector_int_price).get_text()
-    numeric_int_value = float(''.join(c for c in int_value if c.isdigit() or c == '.'))
+        # Get the intrinsic value
+        int_value = soup_1.select_one(selector_int_price).get_text()
+        numeric_int_value = float(''.join(c for c in int_value if c.isdigit() or c == '.'))
 
-    # Store the base case values
-    current_data["Current_Price"] = numeric_current_price
-    current_data["Intrinsic_Value_base"] = numeric_int_value
-    if numeric_int_value < numeric_current_price - alpha * numeric_current_price:
-        current_data["Signal_intrinsic"] = "Overvalued"
-    elif numeric_int_value < numeric_current_price + alpha * numeric_current_price:
-        current_data["Signal_intrinsic"] = "Properly Valued"
-    else:
-        current_data["Signal_intrinsic"] = "Undervalued"
-    
-    # Wall street estimates
-    url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
-    
-    html_3 = requests.get(url_3).text
-    soup_3 = BeautifulSoup(html_3, 'html.parser')
-    
-    # Lowest estimate
-    selector_estimate_low = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(1) > div.right-aligned > div.ui.header"
-    estimate_low = soup_3.select_one(selector_estimate_low).get_text()
-    numeric_estimate_low = float(''.join(c for c in estimate_low if c.isdigit() or c == '.'))
-    
-    current_data["Wall street lowest estimate 1-yr"] = numeric_estimate_low
-    
-    # Avg estimate
-    selector_estimate_avg = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(3) > div.right-aligned > div.ui.header"
-    estimate_avg = soup_3.select_one(selector_estimate_avg).get_text()
-    numeric_estimate_avg = float(''.join(c for c in estimate_avg if c.isdigit() or c == '.'))
-    
-    current_data["Wall street average estimate 1-yr"] = numeric_estimate_avg
-    
-    # Highest estimate
-    selector_estimate_high = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(3) > div > div:nth-child(7) > div:nth-child(5) > div.right-aligned > div.ui.header"
-    estimate_high = soup_3.select_one(selector_estimate_high).get_text()
-    numeric_estimate_high = float(''.join(c for c in estimate_high if c.isdigit() or c == '.'))
-    
-    current_data["Wall street highest estimate 1-yr"] = numeric_estimate_high
-    
-    # Append the dictionary to the list
-    values.append(current_data)
+        # Store the base case values
+        current_data["Current_Price"] = numeric_current_price
+        current_data["Intrinsic_Value_base"] = numeric_int_value
+        if numeric_int_value < numeric_current_price - alpha * numeric_current_price:
+            current_data["Signal_intrinsic"] = "Overvalued"
+        elif numeric_int_value < numeric_current_price + alpha * numeric_current_price:
+            current_data["Signal_intrinsic"] = "Properly Valued"
+        else:
+            current_data["Signal_intrinsic"] = "Undervalued"
+        
+        # Fetch expert opinions
+        url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
+        html_3 = requests.get(url_3).text
+        soup_3 = BeautifulSoup(html_3, 'html.parser')
+        expert_opinions_link = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
+        current_data["Expert_Opinions_Link"] = expert_opinions_link
 
+    except Exception as e:
+        print(f"Error fetching data for {current_ticker}: {e}")
+        return None
+    
     # Fetch data for other cases
     for case in cases[0:]:
         url_2 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/dcf-valuation/{case}-case"
@@ -85,24 +67,7 @@ def get_values(current_ticker, alpha):
         else: 
             current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
                 
-    return pd.DataFrame(values).set_index("Ticker").transpose()
-
-def get_pe_ratio(symbol, api_key):
-    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    pe_ratio = data.get("PERatio")
-    return pe_ratio
-
-def get_values_comp(ticker):
-    ticker_yf = yf.Ticker(ticker)
-    info = ticker_yf.info
-    free_cash_flow = info.get("freeCashflow")
-    enterprise_value = info.get("enterpriseValue")
-    ls = {"FCF": free_cash_flow, "EV": enterprise_value}
-    index = [ticker]  # Assuming you want the ticker as the index
-    df = pd.DataFrame(ls, index=index)
-    return df.T
+    return pd.DataFrame(values)
 
 def main():
     st.title("Stock Analysis")
