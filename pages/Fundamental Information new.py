@@ -122,7 +122,7 @@ def main():
     st.title("Stock Analysis")
     
     ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
-    alpha = st.radio(0.01, 0.02, 0.05 )
+    alpha = st.radio("error margin" , (0.01, 0.02, 0.05 ))
     if ticker:
         try:
             ticker = ticker.upper()  # Convert to uppercase if ticker is provided
