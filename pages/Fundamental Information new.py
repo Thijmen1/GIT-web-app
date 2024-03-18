@@ -134,15 +134,15 @@ def main():
             st.write(df)
             
             st.subheader("Expert opinions")
-            st.write("temporary filling, the link to the expert opinions: ")           
+            st.write("Temporary filling, the link to the expert opinions: ")           
             st.write(f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets")
             
             st.header("Performance metrics")
-            st.subheader("PE-ratio")
+            st.subheader("PE-ratio (BUg occuring with retrieval)")
             pe_ratio = get_pe_ratio(ticker, api_key)
             st.write(pe_ratio)
             
-            st.subheader("FCF value")
+            st.subheader("FCF and enterprise values")
             df_2 = get_values_comp(ticker)
             st.write(df_2)
             
