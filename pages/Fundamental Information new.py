@@ -65,8 +65,11 @@ def get_pe_ratio(symbol, api_key):
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
     response = requests.get(url)
     data = response.json()
+    print("Alpha Vantage API Response:", data)  # Debugging statement
     pe_ratio = data.get("PERatio")
+    print("PE Ratio:", pe_ratio)  # Debugging statement
     return pe_ratio
+
 
 def fetch_opinions(current_ticker): 
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
