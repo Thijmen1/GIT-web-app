@@ -104,12 +104,6 @@ def get_values_comp(ticker):
     df = pd.DataFrame(ls, index=index)
     return df.T
 
-def get_expert_opinions(ticker):
-    # This function should retrieve expert opinions for the given stock ticker
-    # You can implement this function using web scraping or by utilizing an API if available
-    # For demonstration purposes, I'll just return a placeholder URL
-    return f"https://www.alphaspread.com/security/nasdaq/{ticker}/analyst-estimates#wall-street-price-targets"
-
 def main():
     st.title("Stock Analysis")
     
@@ -119,6 +113,7 @@ def main():
         try:
             tickers_list = tickers.split(",")  # Convert input to list of tickers
             dfs = []
+            
             for ticker in tickers_list:
                 ticker = ticker.strip()  # Remove leading/trailing whitespace
                 stock_info = yf.Ticker(ticker)
@@ -126,11 +121,6 @@ def main():
                 df = get_values(ticker, alpha)  # Call get_values function to fetch data
                 df.columns = pd.MultiIndex.from_product([[company_name], df.columns])  # Add company name as column level
                 dfs.append(df)  # Append dataframe without transposing
-                
-                # Display expert opinions
-                expert_opinions_url = get_expert_opinions(ticker)
-                st.subheader(f"Expert opinions for {company_name}")
-                st.write(f"Link to expert opinions: {expert_opinions_url}")
                 
             # Concatenate dataframes along columns (axis=1)
             df_concat = pd.concat(dfs, axis=1)
@@ -141,10 +131,8 @@ def main():
         except Exception as e:
             st.error(f"Fill in valid stock tickers (e.g., AAPL, MSFT) separated by commas. {e}")     
 
-
 if __name__ == "__main__":
     main()
-
 
 
     
