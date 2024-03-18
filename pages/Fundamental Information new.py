@@ -89,11 +89,11 @@ def get_values(current_ticker, alpha):
         numeric_dcf_value = float(''.join(c for c in dcf_value if c.isdigit() or c == '.'))
 
         current_data[f"DCF_value_{case}_AS"] = numeric_dcf_value
-        if numeric_dcf_value < numeric_current_price - alpha * numeric_current_price:
-            current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
-        elif numeric_dcf_value < numeric_current_price + alpha * numeric_current_price:
-            current_data[f"Signal_DCF_{case}_AS"] = "Properly Valued"
-        else: current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
+        # if numeric_dcf_value < numeric_current_price - alpha * numeric_current_price: # not working properly
+        #     current_data[f"Signal_DCF_{case}_AS"] = "Undervalued"
+        # elif numeric_dcf_value < numeric_current_price + alpha * numeric_current_price:
+        #     current_data[f"Signal_DCF_{case}_AS"] = "Properly Valued"
+        # else: current_data[f"Signal_DCF_{case}_AS"] = "Overvalued"
                 
         return pd.DataFrame(values)
         
@@ -121,7 +121,7 @@ def main():
     st.title("Stock Analysis")
     
     ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
-    alpha = st.radio("Error margin" , (0.01, 0.02, 0.05 ))
+    alpha = st.radio("Error marginm (currently a bug that prevents teh cases form showing up)" , (0.01, 0.02, 0.05 ))
     if ticker:
         try:
             ticker = ticker.upper()  # Convert to uppercase if ticker is provided
