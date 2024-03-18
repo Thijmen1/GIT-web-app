@@ -40,6 +40,7 @@ def get_values(current_ticker, api_key):
     
     # Fetch P/E ratio using Alpha Vantage
     alpha_vantage_pe_ratio = get_pe_ratio(current_ticker, api_key)
+    print("Alpha Vantage PE Ratio Response:", alpha_vantage_pe_ratio)  # Debugging statement
     current_data["P/E Ratio"] = alpha_vantage_pe_ratio
 
     # Append the dictionary to the list
@@ -89,7 +90,7 @@ def fetch_opinions(current_ticker):
 
 def main():
     st.title("Stock Analysis")
-    api_key = 'YOUR_API_KEY'  # Replace with your Alpha Vantage API key
+    api_key = 'YOUR_ALPHA_VANTAGE_API_KEY'  # Replace with your Alpha Vantage API key
     
     ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
     
@@ -113,6 +114,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
