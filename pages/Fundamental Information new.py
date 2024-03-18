@@ -12,11 +12,9 @@ import streamlit as st
 import yfinance as yf
 
 cases = ["base", "bull", "bear"]
-
-# Create an empty list to store the data
 values = []
 
-def get_values(current_ticker):
+def get_values(current_ticker, api_key):
     url_1 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/summary"
     current_data = {"Ticker": current_ticker}
 
@@ -40,6 +38,10 @@ def get_values(current_ticker):
     current_data["Intrinsic_Value_base"] = numeric_int_value
     current_data["Signal_intrinsic"] = "Undervalued" if numeric_int_value > numeric_current_price else "Overvalued"
     
+    # Fetch P/E ratio using Alpha Vantage
+    alpha_vantage_pe_ratio = get_pe_ratio(current_ticker, api_key)
+    current_data["P/E Ratio"] = alpha_vantage_pe_ratio
+
     # Append the dictionary to the list
     values.append(current_data)
 
@@ -87,6 +89,7 @@ def fetch_opinions(current_ticker):
 
 def main():
     st.title("Stock Analysis")
+    api_key = 'YOUR_ALPHA_VANTAGE_API_KEY'  # Replace with your Alpha Vantage API key
     
     ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
     
@@ -96,7 +99,7 @@ def main():
             stock_info = yf.Ticker(ticker)
             company_name = stock_info.info['longName']
         
-            df = get_values(ticker)  # Call get_values function to fetch data
+            df = get_values(ticker, api_key)  # Call get_values function to fetch data
             df = df.transpose()
             st.header(company_name)
             st.write(df)
@@ -105,26 +108,11 @@ def main():
             df_2 = fetch_opinions(ticker)
             st.write(df_2)
             
-            # Fetch P/E ratio using Alpha Vantage
-            api_key = 'YOUR_API_KEY'  # Replace with your Alpha Vantage API key
-            pe_ratio = get_pe_ratio(ticker, api_key)
-            st.write(f"The P/E ratio of {ticker} is {pe_ratio}")
-            
-            # Fetch free cash flow and enterprise value using yfinance
-            try:
-                info = stock_info.info
-                free_cash_flow = info.get("freeCashflow")
-                enterprise_value = info.get("enterpriseValue")
-                st.write(f"For {ticker}:")
-                st.write(f"Free Cash Flow: {free_cash_flow}")
-                st.write(f"Enterprise Value: {enterprise_value}")
-            except Exception as e:
-                st.error(f"Failed to retrieve data for {ticker}: {e}")
-
         except Exception as e:
             st.error(f"Fill in a valid stock ticker e.g. AAPL {e}")     
 
 if __name__ == "__main__":
     main()
+
 
 
