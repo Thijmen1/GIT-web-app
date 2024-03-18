@@ -56,22 +56,6 @@ def get_values(current_ticker):
         current_data[f"DCF_value_{case}_AS"] = numeric_dcf_value
         current_data[f"Signal_DCF_{case}_AS"] = "Undervalued" if numeric_dcf_value > numeric_current_price else "Overvalued"
     
-    # Fetch P/E ratio using Alpha Vantage
-    api_key = 'YOUR_API_KEY'  # Replace with your Alpha Vantage API key
-    pe_ratio = get_pe_ratio(current_ticker, api_key)
-    current_data["PE_Ratio"] = pe_ratio
-
-    # Fetch free cash flow and enterprise value using yfinance
-    try:
-        ticker = yf.Ticker(current_ticker)
-        info = ticker.info
-        free_cash_flow = info.get("freeCashflow")
-        enterprise_value = info.get("enterpriseValue")
-        current_data["Free_Cash_Flow"] = free_cash_flow
-        current_data["Enterprise_Value"] = enterprise_value
-    except Exception as e:
-        print(f"Failed to retrieve data for {current_ticker}: {e}")
-
     return pd.DataFrame(values)
 
 def get_pe_ratio(symbol, api_key):
@@ -121,9 +105,26 @@ def main():
             df_2 = fetch_opinions(ticker)
             st.write(df_2)
             
+            # Fetch P/E ratio using Alpha Vantage
+            api_key = 'YOUR_API_KEY'  # Replace with your Alpha Vantage API key
+            pe_ratio = get_pe_ratio(ticker, api_key)
+            st.write(f"The P/E ratio of {ticker} is {pe_ratio}")
+            
+            # Fetch free cash flow and enterprise value using yfinance
+            try:
+                info = stock_info.info
+                free_cash_flow = info.get("freeCashflow")
+                enterprise_value = info.get("enterpriseValue")
+                st.write(f"For {ticker}:")
+                st.write(f"Free Cash Flow: {free_cash_flow}")
+                st.write(f"Enterprise Value: {enterprise_value}")
+            except Exception as e:
+                st.error(f"Failed to retrieve data for {ticker}: {e}")
+
         except Exception as e:
             st.error(f"Fill in a valid stock ticker e.g. AAPL {e}")     
 
 if __name__ == "__main__":
     main()
+
 
