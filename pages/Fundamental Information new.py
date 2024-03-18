@@ -63,6 +63,7 @@ def get_pe_ratio(symbol, api_key):
     return pe_ratio
 
 
+
 def fetch_opinions(current_ticker): 
     url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
     
