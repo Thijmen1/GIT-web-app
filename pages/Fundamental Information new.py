@@ -75,14 +75,20 @@ def fetch_opinions(current_ticker):
     soup_3 = BeautifulSoup(html_3, 'html.parser')
     
     selector_company = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div > div.ui.header > div.content"
-    selector_estimate = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > table > tbody > tr:nth-child(1) > td:nth-child(2)"
+    selector_estimate = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > table > tbody > tr > td:nth-child(2)"
     
     companies = [item.text.strip() for item in soup_3.select(selector_company)]
     estimates = [float(item.text.strip()) for item in soup_3.select(selector_estimate)]
     
+    # Ensure both arrays are of the same length
+    min_length = min(len(companies), len(estimates))
+    companies = companies[:min_length]
+    estimates = estimates[:min_length]
+    
     df = pd.DataFrame({"Company": companies, "Estimate 1-yr": estimates})
     
     return df
+
 
 def main():
     st.title("Stock Analysis")
