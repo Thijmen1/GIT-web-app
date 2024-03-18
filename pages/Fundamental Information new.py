@@ -68,31 +68,9 @@ def get_pe_ratio(symbol, api_key):
     pe_ratio = data.get("PERatio")
     return pe_ratio
 
-def fetch_opinions(current_ticker): 
-    url_3 = f"https://www.alphaspread.com/security/nasdaq/{current_ticker}/analyst-estimates#wall-street-price-targets"
-    
-    html_3 = requests.get(url_3).text
-    soup_3 = BeautifulSoup(html_3, 'html.parser')
-    
-    selector_company = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > div > div.ui.header > div.content"
-    selector_estimate = "#main > div:nth-child(3) > div:nth-child(1) > div > div:nth-child(5) > div > div.mobile-only > div > table > tbody > tr > td:nth-child(2)"
-    
-    companies = [item.text.strip() for item in soup_3.select(selector_company)]
-    estimates = [float(item.text.strip()) for item in soup_3.select(selector_estimate)]
-    
-    # Ensure both arrays are of the same length
-    min_length = min(len(companies), len(estimates))
-    companies = companies[:min_length]
-    estimates = estimates[:min_length]
-    
-    df = pd.DataFrame({"Company": companies, "Estimate 1-yr": estimates})
-    
-    return df
-
-
 def main():
     st.title("Stock Analysis")
-    api_key = 'YOUR_API_KEY'  # Replace with your Alpha Vantage API key
+    api_key = 'YOUR_ALPHA_VANTAGE_API_KEY'  # Replace with your Alpha Vantage API key
     
     ticker = st.text_input('Enter stock ticker').upper()  # Update with more tickers if needed
     
@@ -106,10 +84,6 @@ def main():
             df = df.transpose()
             st.header(company_name)
             st.write(df)
-            
-            st.subheader("Expert opinions")
-            df_2 = fetch_opinions(ticker)
-            st.write(df_2)
             
         except Exception as e:
             st.error(f"Fill in a valid stock ticker e.g. AAPL {e}")     
