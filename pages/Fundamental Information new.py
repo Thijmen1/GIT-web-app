@@ -75,20 +75,22 @@ def fetch_opinions(current_ticker):
     soup_3 = BeautifulSoup(html_3, 'html.parser')
 
     # Extract expert opinions
-    experts = soup_3.select(".desktop-only")
-    st.write("Expert Opinion Elements:", experts)  # Debugging statement
+    expert_container = soup_3.select_one(".analyst-estimates-desktop")
+    if not expert_container:
+        return pd.DataFrame(columns=["Company", "Estimate 1-yr"])
+
+    experts = expert_container.select("tr")
     companies = []
     estimates = []
 
-    for expert in experts:
+    for expert in experts[1:]:  # Skip the header row
         company = expert.select_one(".ui.header").text.strip()
         estimate = expert.select_one("td:nth-child(2)").text.strip()
-        st.write("Company:", company)  # Debugging statement
-        st.write("Estimate 1-yr:", estimate)  # Debugging statement
         companies.append(company)
         estimates.append(estimate)
 
     return pd.DataFrame({"Company": companies, "Estimate 1-yr": estimates})
+
 
 
 def main():
