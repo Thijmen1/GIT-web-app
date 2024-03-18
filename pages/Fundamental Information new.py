@@ -76,6 +76,7 @@ def fetch_opinions(current_ticker):
 
     # Extract expert opinions
     experts = soup_3.select(".desktop-only")
+    st.write("Expert Opinion Elements:", experts)  # Debugging statement
     companies = []
     estimates = []
 
